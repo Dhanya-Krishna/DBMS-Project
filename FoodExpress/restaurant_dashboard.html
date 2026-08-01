@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Dashboard - FoodExpress</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-2 px-0 sidebar d-none d-lg-block">
+        <div class="sidebar-brand">
+          <a class="navbar-brand" href="#">
+            <span class="logo-icon"><i class="bi bi-basket2-fill"></i></span>
+            FoodExpress
+          </a>
+          <p class="small text-muted mb-0 mt-1">Restaurant Panel</p>
+        </div>
+        <a href="#" class="sidebar-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="#" class="sidebar-link"><i class="bi bi-bag"></i> Orders</a>
+        <a href="#" class="sidebar-link"><i class="bi bi-journal-text"></i> Menu</a>
+        <a href="#" class="sidebar-link"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a href="#" class="sidebar-link"><i class="bi bi-gear"></i> Settings</a>
+        <a href="index.html" class="sidebar-link"><i class="bi bi-box-arrow-left"></i> Logout</a>
+      </div>
+
+      <div class="col-lg-10 py-4 px-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="fw-bold mb-0">Spice Garden Dashboard</h4>
+            <p class="text-muted small mb-0">Welcome back, Manager!</p>
+          </div>
+          <div class="d-flex gap-2 align-items-center">
+            <span class="badge bg-success">Online</span>
+            <button class="btn btn-outline-custom btn-sm">Pause Orders</button>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-3">
+            <div class="stat-card">
+              <div class="stat-icon orange"><i class="bi bi-bag-check"></i></div>
+              <div class="stat-value" data-count="48">0</div>
+              <div class="stat-label">Today's Orders</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <div class="stat-icon green"><i class="bi bi-currency-rupee"></i></div>
+              <div class="stat-value" data-count="12500">0</div>
+              <div class="stat-label">Today's Revenue</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="bi bi-clock-history"></i></div>
+              <div class="stat-value" data-count="6">0</div>
+              <div class="stat-label">Pending Orders</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <div class="stat-icon purple"><i class="bi bi-star"></i></div>
+              <div class="stat-value">4.5</div>
+              <div class="stat-label">Avg. Rating</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-table mb-4">
+          <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h5 class="fw-bold mb-0">Live Orders</h5>
+            <span class="badge bg-danger">6 Active</span>
+          </div>
+          <div class="table-responsive">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Amount</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#FE78901</td>
+                  <td>Amit S.</td>
+                  <td>Butter Chicken, Naan x2</td>
+                  <td>Rs 420</td>
+                  <td>2 min ago</td>
+                  <td><span class="status-badge status-pending">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-success btn-status" data-status="preparing">Accept</button>
+                    <button class="btn btn-sm btn-outline-danger">Reject</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#FE78900</td>
+                  <td>Priya M.</td>
+                  <td>Chicken Biryani, Lassi</td>
+                  <td>Rs 360</td>
+                  <td>5 min ago</td>
+                  <td><span class="status-badge status-preparing">Preparing</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary btn-status" data-status="ready">Mark Ready</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#FE78899</td>
+                  <td>Rahul K.</td>
+                  <td>Veg Thali x2</td>
+                  <td>Rs 500</td>
+                  <td>8 min ago</td>
+                  <td><span class="status-badge status-preparing">Preparing</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary btn-status" data-status="ready">Mark Ready</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#FE78895</td>
+                  <td>Sneha R.</td>
+                  <td>Paneer Tikka, Dal Makhani</td>
+                  <td>Rs 400</td>
+                  <td>12 min ago</td>
+                  <td><span class="status-badge status-ready">Ready</span></td>
+                  <td>
+                    <span class="text-success small"><i class="bi bi-check-circle"></i> Awaiting pickup</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#FE78890</td>
+                  <td>Vikram P.</td>
+                  <td>Tandoori Chicken</td>
+                  <td>Rs 350</td>
+                  <td>20 min ago</td>
+                  <td><span class="status-badge status-delivered">Delivered</span></td>
+                  <td>
+                    <span class="text-muted small">Completed</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="stat-card">
+              <h6 class="fw-bold mb-3">Top Selling Items Today</h6>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Chicken Biryani</span>
+                <span class="fw-semibold">18 orders</span>
+              </div>
+              <div class="progress mb-3" style="height:6px;">
+                <div class="progress-bar" style="width:90%;background:var(--primary);"></div>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Butter Chicken</span>
+                <span class="fw-semibold">14 orders</span>
+              </div>
+              <div class="progress mb-3" style="height:6px;">
+                <div class="progress-bar" style="width:70%;background:var(--primary);"></div>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Paneer Tikka</span>
+                <span class="fw-semibold">11 orders</span>
+              </div>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar" style="width:55%;background:var(--primary);"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="stat-card">
+              <h6 class="fw-bold mb-3">Quick Actions</h6>
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-custom text-start"><i class="bi bi-plus-circle me-2"></i> Add New Menu Item</button>
+                <button class="btn btn-outline-custom text-start"><i class="bi bi-toggle-on me-2"></i> Update Item Availability</button>
+                <button class="btn btn-outline-custom text-start"><i class="bi bi-percent me-2"></i> Create Offer / Discount</button>
+                <button class="btn btn-outline-custom text-start"><i class="bi bi-clock me-2"></i> Update Opening Hours</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

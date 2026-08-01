@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - FoodExpress</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="home.html">
+        <span class="logo-icon"><i class="bi bi-basket2-fill"></i></span>
+        FoodExpress
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link active" href="home.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="restaurants.html">Restaurants</a></li>
+          <li class="nav-item"><a class="nav-link" href="order_tracking.html">Orders</a></li>
+          <li class="nav-item">
+            <a class="nav-link cart-badge" href="cart.html">
+              <i class="bi bi-cart3"></i> Cart
+              <span class="badge rounded-pill cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span class="user-name">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="order_tracking.html"><i class="bi bi-bag me-2"></i>My Orders</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="index.html"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Welcome Banner -->
+  <section class="hero-section" style="padding: 50px 0;">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-7">
+          <h1 class="hero-title" style="font-size: 2.2rem;">Hello, <span class="user-name">User</span>! 👋</h1>
+          <p class="hero-subtitle">What would you like to eat today?</p>
+          <div class="search-box">
+            <i class="bi bi-search text-muted ms-3"></i>
+            <input type="text" id="searchInput" placeholder="Search for restaurants or dishes...">
+            <button class="btn btn-primary-custom" id="searchBtn">Search</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="py-4">
+    <div class="container">
+      <h5 class="fw-bold mb-3">Categories</h5>
+      <div class="row g-3">
+        <div class="col-4 col-md-2">
+          <a href="restaurants.html?cat=pizza" class="category-card d-block">
+            <div class="category-icon"><i class="bi bi-pie-chart-fill"></i></div>
+            <h6>Pizza</h6>
+          </a>
+        </div>
+        <div class="col-4 col-md-2">
+          <a href="restaurants.html?cat=burger" class="category-card d-block">
+            <div class="category-icon"><i class="bi bi-cup-straw"></i></div>
+            <h6>Burgers</h6>
+          </a>
+        </div>
+        <div class="col-4 col-md-2">
+          <a href="restaurants.html?cat=biryani" class="category-card d-block">
+            <div class="category-icon"><i class="bi bi-egg-fried"></i></div>
+            <h6>Biryani</h6>
+          </a>
+        </div>
+        <div class="col-4 col-md-2">
+          <a href="restaurants.html?cat=chinese" class="category-card d-block">
+            <div class="category-icon"><i class="bi bi-bowl-hot"></i></div>
+            <h6>Chinese</h6>
+          </a>
+        </div>
+        <div class="col-4 col-md-2">
+          <a href="restaurants.html?cat=dessert" class="category-card d-block">
+            <div class="category-icon"><i class="bi bi-cake2-fill"></i></div>
+            <h6>Desserts</h6>
+          </a>
+        </div>
+        <div class="col-4 col-md-2">
+          <a href="restaurants.html?cat=healthy" class="category-card d-block">
+            <div class="category-icon"><i class="bi bi-heart-fill"></i></div>
+            <h6>Healthy</h6>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nearby Restaurants -->
+  <section class="py-4">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">Nearby Restaurants</h5>
+        <a href="restaurants.html" class="text-primary small fw-semibold">See all →</a>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <a href="menu.html?id=1" class="restaurant-card d-block position-relative">
+            <span class="offer-badge">20% OFF</span>
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80" alt="Spice Garden" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
+            <div class="restaurant-body">
+              <h5 class="restaurant-name">Spice Garden</h5>
+              <div class="restaurant-meta">
+                <span class="rating-badge"><i class="bi bi-star-fill"></i> 4.5</span>
+                <span>30 mins</span>
+                <span>₹200 for two</span>
+              </div>
+              <div class="cuisine-tags">
+                <span class="cuisine-tag">North Indian</span>
+                <span class="cuisine-tag">Biryani</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <a href="menu.html?id=2" class="restaurant-card d-block">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80" alt="Pizza Palace" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
+            <div class="restaurant-body">
+              <h5 class="restaurant-name">Pizza Palace</h5>
+              <div class="restaurant-meta">
+                <span class="rating-badge"><i class="bi bi-star-fill"></i> 4.3</span>
+                <span>25 mins</span>
+                <span>₹350 for two</span>
+              </div>
+              <div class="cuisine-tags">
+                <span class="cuisine-tag">Italian</span>
+                <span class="cuisine-tag">Pizza</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <a href="menu.html?id=3" class="restaurant-card d-block position-relative">
+            <span class="offer-badge">Free Delivery</span>
+            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80" alt="Burger Hub" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
+            <div class="restaurant-body">
+              <h5 class="restaurant-name">Burger Hub</h5>
+              <div class="restaurant-meta">
+                <span class="rating-badge"><i class="bi bi-star-fill"></i> 4.6</span>
+                <span>20 mins</span>
+                <span>₹250 for two</span>
+              </div>
+              <div class="cuisine-tags">
+                <span class="cuisine-tag">American</span>
+                <span class="cuisine-tag">Fast Food</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <a href="menu.html?id=4" class="restaurant-card d-block">
+            <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&q=80" alt="Dragon Wok" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
+            <div class="restaurant-body">
+              <h5 class="restaurant-name">Dragon Wok</h5>
+              <div class="restaurant-meta">
+                <span class="rating-badge"><i class="bi bi-star-fill"></i> 4.4</span>
+                <span>35 mins</span>
+                <span>₹300 for two</span>
+              </div>
+              <div class="cuisine-tags">
+                <span class="cuisine-tag">Chinese</span>
+                <span class="cuisine-tag">Asian</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <a href="menu.html?id=5" class="restaurant-card d-block position-relative">
+            <span class="offer-badge">15% OFF</span>
+            <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80" alt="Sweet Treats" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
+            <div class="restaurant-body">
+              <h5 class="restaurant-name">Sweet Treats</h5>
+              <div class="restaurant-meta">
+                <span class="rating-badge"><i class="bi bi-star-fill"></i> 4.7</span>
+                <span>28 mins</span>
+                <span>₹180 for two</span>
+              </div>
+              <div class="cuisine-tags">
+                <span class="cuisine-tag">Desserts</span>
+                <span class="cuisine-tag">Bakery</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <a href="menu.html?id=6" class="restaurant-card d-block">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80" alt="Green Bowl" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
+            <div class="restaurant-body">
+              <h5 class="restaurant-name">Green Bowl</h5>
+              <div class="restaurant-meta">
+                <span class="rating-badge"><i class="bi bi-star-fill"></i> 4.5</span>
+                <span>22 mins</span>
+                <span>₹280 for two</span>
+              </div>
+              <div class="cuisine-tags">
+                <span class="cuisine-tag">Healthy</span>
+                <span class="cuisine-tag">Salads</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 mb-4">
+          <h5><i class="bi bi-basket2-fill"></i> FoodExpress</h5>
+          <p class="small">Delivering happiness, one meal at a time.</p>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5>Quick Links</h5>
+          <a href="restaurants.html">Restaurants</a>
+          <a href="cart.html">Cart</a>
+          <a href="profile.html">Profile</a>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5>Support</h5>
+          <a href="#">Help Center</a>
+          <a href="#">Contact Us</a>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5>Partners</h5>
+          <a href="restaurant_dashboard.html">Restaurant Dashboard</a>
+          <a href="delivery_dashboard.html">Delivery Partner</a>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2026 FoodExpress. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

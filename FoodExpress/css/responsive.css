@@ -1,0 +1,191 @@
+/* FoodExpress - Responsive Styles */
+
+/* Large devices (desktops, less than 1200px) */
+@media (max-width: 1199.98px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+  .hero-title {
+    font-size: 2.2rem;
+  }
+
+  .hero-section {
+    padding: 60px 0;
+    text-align: center;
+  }
+
+  .hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .search-box {
+    margin: 0 auto;
+  }
+
+  .auth-left {
+    min-height: auto;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .sidebar {
+    min-height: auto;
+    position: relative;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .cart-summary {
+    position: static;
+    margin-top: 1.5rem;
+  }
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+
+  .navbar-brand .logo-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+
+  .search-box {
+    flex-direction: column;
+    border-radius: var(--radius);
+    padding: 12px;
+  }
+
+  .search-box input {
+    width: 100%;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .search-box .btn {
+    width: 100%;
+  }
+
+  .cart-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cart-item-img {
+    width: 100%;
+    height: 140px;
+  }
+
+  .filter-bar {
+    justify-content: center;
+  }
+
+  .page-header {
+    padding: 1.5rem 0;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .auth-right {
+    padding: 2rem 1.5rem;
+  }
+
+  .restaurant-img {
+    height: 150px;
+  }
+
+  .menu-img {
+    height: 140px;
+  }
+
+  .tracking-timeline {
+    padding-left: 30px;
+  }
+
+  .footer {
+    text-align: center;
+  }
+
+  .footer .col-md-3 {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .btn-primary-custom,
+  .btn-outline-custom {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .category-icon {
+    width: 55px;
+    height: 55px;
+    font-size: 1.4rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .order-table {
+    font-size: 0.85rem;
+  }
+
+  .order-table th,
+  .order-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+}
+
+/* Utility responsive helpers */
+@media (max-width: 991.98px) {
+  .d-mobile-none {
+    display: none !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .d-desktop-none {
+    display: none !important;
+  }
+}
