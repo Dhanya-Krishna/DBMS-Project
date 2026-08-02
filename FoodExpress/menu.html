@@ -91,6 +91,32 @@
     <span class="badge bg-white text-primary cart-count">0</span>
   </a>
 
+  
+  <!-- Item Detail Modal -->
+  <div class="item-modal-overlay" id="itemModal" role="dialog" aria-modal="true">
+    <div class="item-modal">
+      <div class="item-modal-img-wrap">
+        <button type="button" class="item-modal-close" id="itemModalClose" aria-label="Close">&times;</button>
+        <img src="" alt="" class="item-modal-img" id="modalImg">
+      </div>
+      <div class="item-modal-body">
+        <h4 class="fw-bold mb-1" id="modalName"></h4>
+        <p class="text-muted small mb-2" id="modalCategory"></p>
+        <p class="mb-3" id="modalDesc"></p>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="item-modal-price" id="modalPrice"></span>
+          <span id="modalVeg"></span>
+        </div>
+        <div class="item-modal-actions">
+          <button type="button" class="btn btn-primary-custom flex-grow-1" id="modalAddCart">
+            <i class="bi bi-cart-plus"></i> Add to Cart
+          </button>
+          <button type="button" class="btn btn-outline-custom" id="modalCloseBtn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer">
     <div class="container">
       <div class="footer-bottom">&copy; 2026 FoodExpress. All rights reserved.</div>
@@ -146,9 +172,9 @@
         }
         noResults.classList.add('d-none');
 
-        grid.innerHTML = items.map(function (item) {
+        grid.innerHTML = items.map(function (item, idx) {
           return '<div class="col-md-6 col-lg-4">' +
-            '<div class="menu-card">' +
+            '<div class="menu-card menu-card-clickable" data-idx="' + idx + '" style="cursor:pointer;">' +
               '<img src="' + item.image + '" alt="' + item.name + '" class="menu-img-real" ' +
                    'onerror="this.src=\'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80\'">' +
               '<div class="menu-body">' +
@@ -173,6 +199,15 @@
           '</div>';
         }).join('');
 
+        // Open modal when card is clicked (not the + button)
+        grid.querySelectorAll('.menu-card-clickable').forEach(function (card) {
+          card.addEventListener('click', function (e) {
+            if (e.target.closest('.btn-add-cart')) return;
+            var idx = parseInt(this.dataset.idx, 10);
+            openItemModal(items[idx]);
+          });
+        });
+
         grid.querySelectorAll('.btn-add-cart').forEach(function (btn) {
           btn.addEventListener('click', function (e) {
             e.preventDefault();
@@ -189,6 +224,53 @@
           });
         });
       }
+
+
+      // Item detail modal
+      var modal = document.getElementById('itemModal');
+      var currentModalItem = null;
+
+      function openItemModal(item) {
+        currentModalItem = item;
+        document.getElementById('modalImg').src = item.image;
+        document.getElementById('modalImg').alt = item.name;
+        document.getElementById('modalName').textContent = item.name;
+        document.getElementById('modalCategory').textContent = item.category + ' · ' + restaurant.name;
+        document.getElementById('modalDesc').textContent = item.desc;
+        document.getElementById('modalPrice').textContent = '₹' + item.price;
+        document.getElementById('modalVeg').innerHTML = item.veg
+          ? '<span class="badge bg-success">Vegetarian</span>'
+          : '<span class="badge bg-danger">Non-Vegetarian</span>';
+        modal.classList.add('open');
+        document.body.classList.add('modal-open');
+      }
+
+      function closeItemModal() {
+        modal.classList.remove('open');
+        document.body.classList.remove('modal-open');
+        currentModalItem = null;
+      }
+
+      document.getElementById('itemModalClose').addEventListener('click', closeItemModal);
+      document.getElementById('modalCloseBtn').addEventListener('click', closeItemModal);
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeItemModal();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeItemModal();
+      });
+      document.getElementById('modalAddCart').addEventListener('click', function () {
+        if (!currentModalItem || !window.Cart) return;
+        Cart.addItem({
+          id: currentModalItem.id,
+          name: currentModalItem.name,
+          price: currentModalItem.price,
+          image: currentModalItem.image,
+          restaurant: restaurant.name,
+          qty: 1
+        });
+        closeItemModal();
+      });
 
       renderMenu();
     })();

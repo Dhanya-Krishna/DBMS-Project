@@ -26,7 +26,7 @@
         <a href="#" class="sidebar-link"><i class="bi bi-clock-history"></i> History</a>
         <a href="#" class="sidebar-link"><i class="bi bi-wallet2"></i> Earnings</a>
         <a href="#" class="sidebar-link"><i class="bi bi-person"></i> Profile</a>
-        <a href="index.html" class="sidebar-link"><i class="bi bi-box-arrow-left"></i> Logout</a>
+        <a href="delivery_login.html" class="sidebar-link" id="delLogout"><i class="bi bi-box-arrow-left"></i> Logout</a>
       </div>
 
       <div class="col-lg-10 py-4 px-4">
@@ -147,5 +147,27 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/script.js"></script>
+
+  <script src="js/data.js"></script>
+  <script>
+    (function () {
+      var session = null;
+      try { session = JSON.parse(localStorage.getItem('foodexpress_delivery')); } catch (e) {}
+      if (!session) {
+        window.location.href = 'delivery_login.html';
+        return;
+      }
+      var title = document.querySelector('h4.fw-bold');
+      if (title) title.textContent = 'Hello, ' + (session.name || 'Partner') + '!';
+      document.querySelectorAll('a[href="index.html"]').forEach(function (a) {
+        if (a.textContent.indexOf('Logout') !== -1 || a.innerHTML.indexOf('box-arrow') !== -1) {
+          a.addEventListener('click', function () {
+            localStorage.removeItem('foodexpress_delivery');
+          });
+        }
+      });
+    })();
+  </script>
+
 </body>
 </html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Partner Login - FoodExpress</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="container">
+      <div class="auth-card">
+        <div class="row g-0">
+          <div class="col-lg-5 auth-left">
+            <div>
+              <h2><i class="bi bi-bicycle"></i> Delivery Partner</h2>
+              <p class="mb-4 opacity-90">Accept nearby orders, track earnings, and deliver happiness across the city.</p>
+              <ul class="list-unstyled">
+                <li class="mb-2"><i class="bi bi-check-circle-fill me-2"></i> Flexible working hours</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill me-2"></i> Instant payouts</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill me-2"></i> Live order map</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-7 auth-right">
+            <h3 class="fw-bold mb-1">Delivery Partner Login</h3>
+            <p class="text-muted mb-4">Sign in to start accepting deliveries</p>
+            <form id="deliveryLoginForm" class="needs-validation" novalidate>
+              <div class="mb-3">
+                <label class="form-label" for="delEmail">Email Address</label>
+                <input type="email" class="form-control form-control-custom" id="delEmail" placeholder="rahul@foodexpress.com" required>
+                <div class="invalid-feedback">Please enter a valid email.</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="delPassword">Password</label>
+                <input type="password" class="form-control form-control-custom" id="delPassword" placeholder="••••••••" required minlength="6">
+                <div class="invalid-feedback">Password is required.</div>
+              </div>
+              <div id="loginError" class="alert alert-danger d-none py-2 small"></div>
+              <button type="submit" class="btn btn-primary-custom w-100 py-2 mb-3">Login to Dashboard</button>
+              <p class="text-center text-muted small mb-0">Customer? <a href="login.html" class="text-primary">Customer Login</a> · Restaurant? <a href="restaurant_login.html" class="text-primary">Restaurant Login</a></p>
+            </form>
+            <hr class="my-3">
+            <div class="small text-muted">
+              <strong>Demo accounts:</strong><br>
+              rahul@foodexpress.com / delivery123<br>
+              amit@foodexpress.com / delivery123<br>
+              priya@foodexpress.com / delivery123
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="text-center mt-3"><a href="index.html" class="text-muted"><i class="bi bi-arrow-left"></i> Back to Home</a></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script>
+    document.getElementById('deliveryLoginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!this.checkValidity()) {
+        this.classList.add('was-validated');
+        return;
+      }
+      const email = document.getElementById('delEmail').value.trim().toLowerCase();
+      const password = document.getElementById('delPassword').value;
+      const accounts = window.DELIVERY_ACCOUNTS || {};
+      const account = accounts[email];
+      const errEl = document.getElementById('loginError');
+
+      if (!account || account.password !== password) {
+        errEl.textContent = 'Invalid email or password. Try a demo account below.';
+        errEl.classList.remove('d-none');
+        return;
+      }
+      errEl.classList.add('d-none');
+      localStorage.setItem('foodexpress_delivery', JSON.stringify({
+        email: email,
+        name: account.name,
+        id: account.id
+      }));
+      window.location.href = 'delivery_dashboard.html';
+    });
+  </script>
+</body>
+</html>

@@ -9,6 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .menu-admin-img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
+    .menu-admin-row td { vertical-align: middle; }
+  </style>
 </head>
 <body>
   <div class="container-fluid">
@@ -21,19 +25,17 @@
           </a>
           <p class="small text-muted mb-0 mt-1">Restaurant Panel</p>
         </div>
-        <a href="#" class="sidebar-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="#" class="sidebar-link"><i class="bi bi-bag"></i> Orders</a>
-        <a href="#" class="sidebar-link"><i class="bi bi-journal-text"></i> Menu</a>
-        <a href="#" class="sidebar-link"><i class="bi bi-graph-up"></i> Analytics</a>
-        <a href="#" class="sidebar-link"><i class="bi bi-gear"></i> Settings</a>
-        <a href="index.html" class="sidebar-link"><i class="bi bi-box-arrow-left"></i> Logout</a>
+        <a href="#orders" class="sidebar-link active" data-section="orders"><i class="bi bi-bag"></i> Orders</a>
+        <a href="#menu" class="sidebar-link" data-section="menu"><i class="bi bi-journal-text"></i> My Menu</a>
+        <a href="#analytics" class="sidebar-link" data-section="analytics"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a href="restaurant_login.html" class="sidebar-link" id="logoutBtn"><i class="bi bi-box-arrow-left"></i> Logout</a>
       </div>
 
       <div class="col-lg-10 py-4 px-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div>
-            <h4 class="fw-bold mb-0">Spice Garden Dashboard</h4>
-            <p class="text-muted small mb-0">Welcome back, Manager!</p>
+            <h4 class="fw-bold mb-0" id="dashTitle">Restaurant Dashboard</h4>
+            <p class="text-muted small mb-0" id="dashSubtitle">Welcome back!</p>
           </div>
           <div class="d-flex gap-2 align-items-center">
             <span class="badge bg-success">Online</span>
@@ -66,127 +68,124 @@
           <div class="col-md-3">
             <div class="stat-card">
               <div class="stat-icon purple"><i class="bi bi-star"></i></div>
-              <div class="stat-value">4.5</div>
+              <div class="stat-value" id="restRating">4.5</div>
               <div class="stat-label">Avg. Rating</div>
             </div>
           </div>
         </div>
 
-        <div class="order-table mb-4">
-          <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
-            <h5 class="fw-bold mb-0">Live Orders</h5>
-            <span class="badge bg-danger">6 Active</span>
-          </div>
-          <div class="table-responsive">
-            <table class="table mb-0">
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Items</th>
-                  <th>Amount</th>
-                  <th>Time</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>#FE78901</td>
-                  <td>Amit S.</td>
-                  <td>Butter Chicken, Naan x2</td>
-                  <td>Rs 420</td>
-                  <td>2 min ago</td>
-                  <td><span class="status-badge status-pending">Pending</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-success btn-status" data-status="preparing">Accept</button>
-                    <button class="btn btn-sm btn-outline-danger">Reject</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#FE78900</td>
-                  <td>Priya M.</td>
-                  <td>Chicken Biryani, Lassi</td>
-                  <td>Rs 360</td>
-                  <td>5 min ago</td>
-                  <td><span class="status-badge status-preparing">Preparing</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary btn-status" data-status="ready">Mark Ready</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#FE78899</td>
-                  <td>Rahul K.</td>
-                  <td>Veg Thali x2</td>
-                  <td>Rs 500</td>
-                  <td>8 min ago</td>
-                  <td><span class="status-badge status-preparing">Preparing</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary btn-status" data-status="ready">Mark Ready</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#FE78895</td>
-                  <td>Sneha R.</td>
-                  <td>Paneer Tikka, Dal Makhani</td>
-                  <td>Rs 400</td>
-                  <td>12 min ago</td>
-                  <td><span class="status-badge status-ready">Ready</span></td>
-                  <td>
-                    <span class="text-success small"><i class="bi bi-check-circle"></i> Awaiting pickup</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#FE78890</td>
-                  <td>Vikram P.</td>
-                  <td>Tandoori Chicken</td>
-                  <td>Rs 350</td>
-                  <td>20 min ago</td>
-                  <td><span class="status-badge status-delivered">Delivered</span></td>
-                  <td>
-                    <span class="text-muted small">Completed</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <!-- Orders Section -->
+        <div id="section-orders">
+          <div class="order-table mb-4">
+            <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+              <h5 class="fw-bold mb-0">Live Orders</h5>
+              <span class="badge bg-danger">6 Active</span>
+            </div>
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Amount</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#FE78901</td>
+                    <td>Amit S.</td>
+                    <td>Item × 2</td>
+                    <td>₹420</td>
+                    <td>2 min ago</td>
+                    <td><span class="status-badge status-pending">Pending</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-success btn-status" data-status="preparing">Accept</button>
+                      <button class="btn btn-sm btn-outline-danger">Reject</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#FE78900</td>
+                    <td>Priya M.</td>
+                    <td>Special × 1</td>
+                    <td>₹360</td>
+                    <td>5 min ago</td>
+                    <td><span class="status-badge status-preparing">Preparing</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary btn-status" data-status="ready">Mark Ready</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#FE78899</td>
+                    <td>Rahul K.</td>
+                    <td>Combo × 2</td>
+                    <td>₹500</td>
+                    <td>8 min ago</td>
+                    <td><span class="status-badge status-preparing">Preparing</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary btn-status" data-status="ready">Mark Ready</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#FE78895</td>
+                    <td>Sneha R.</td>
+                    <td>Starter + Main</td>
+                    <td>₹400</td>
+                    <td>12 min ago</td>
+                    <td><span class="status-badge status-ready">Ready</span></td>
+                    <td><span class="text-success small"><i class="bi bi-check-circle"></i> Awaiting pickup</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div class="row g-3">
-          <div class="col-md-6">
-            <div class="stat-card">
-              <h6 class="fw-bold mb-3">Top Selling Items Today</h6>
-              <div class="d-flex justify-content-between mb-2">
-                <span>Chicken Biryani</span>
-                <span class="fw-semibold">18 orders</span>
-              </div>
-              <div class="progress mb-3" style="height:6px;">
-                <div class="progress-bar" style="width:90%;background:var(--primary);"></div>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span>Butter Chicken</span>
-                <span class="fw-semibold">14 orders</span>
-              </div>
-              <div class="progress mb-3" style="height:6px;">
-                <div class="progress-bar" style="width:70%;background:var(--primary);"></div>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span>Paneer Tikka</span>
-                <span class="fw-semibold">11 orders</span>
-              </div>
-              <div class="progress" style="height:6px;">
-                <div class="progress-bar" style="width:55%;background:var(--primary);"></div>
-              </div>
+        <!-- Menu Section (restaurant-specific) -->
+        <div id="section-menu" class="d-none">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">My Menu</h5>
+            <button class="btn btn-primary-custom btn-sm"><i class="bi bi-plus"></i> Add Item</button>
+          </div>
+          <div class="order-table">
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="menuTableBody"></tbody>
+              </table>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="stat-card">
-              <h6 class="fw-bold mb-3">Quick Actions</h6>
-              <div class="d-grid gap-2">
-                <button class="btn btn-outline-custom text-start"><i class="bi bi-plus-circle me-2"></i> Add New Menu Item</button>
-                <button class="btn btn-outline-custom text-start"><i class="bi bi-toggle-on me-2"></i> Update Item Availability</button>
-                <button class="btn btn-outline-custom text-start"><i class="bi bi-percent me-2"></i> Create Offer / Discount</button>
-                <button class="btn btn-outline-custom text-start"><i class="bi bi-clock me-2"></i> Update Opening Hours</button>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="section-analytics" class="d-none">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="stat-card">
+                <h6 class="fw-bold mb-3">Top Selling Items Today</h6>
+                <div id="topSelling"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="stat-card">
+                <h6 class="fw-bold mb-3">Quick Actions</h6>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-outline-custom text-start"><i class="bi bi-plus-circle me-2"></i> Add New Menu Item</button>
+                  <button class="btn btn-outline-custom text-start"><i class="bi bi-toggle-on me-2"></i> Update Availability</button>
+                  <button class="btn btn-outline-custom text-start"><i class="bi bi-percent me-2"></i> Create Offer</button>
+                </div>
               </div>
             </div>
           </div>
@@ -196,6 +195,67 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
   <script src="js/script.js"></script>
+  <script>
+    (function () {
+      // Auth check
+      var session = null;
+      try { session = JSON.parse(localStorage.getItem('foodexpress_restaurant')); } catch (e) {}
+      if (!session || !session.restaurantId) {
+        window.location.href = 'restaurant_login.html';
+        return;
+      }
+
+      var restaurant = window.RESTAURANTS[session.restaurantId];
+      if (!restaurant) {
+        window.location.href = 'restaurant_login.html';
+        return;
+      }
+
+      document.getElementById('dashTitle').textContent = restaurant.name + ' Dashboard';
+      document.getElementById('dashSubtitle').textContent = 'Welcome, ' + (session.name || 'Manager') + '!';
+      document.getElementById('restRating').textContent = restaurant.rating;
+      document.title = restaurant.name + ' Dashboard - FoodExpress';
+
+      // Render menu table
+      var tbody = document.getElementById('menuTableBody');
+      tbody.innerHTML = restaurant.menu.map(function (item) {
+        return '<tr class="menu-admin-row">' +
+          '<td><img src="' + item.image + '" class="menu-admin-img" alt="' + item.name + '" onerror="this.src=\'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&q=80\'"></td>' +
+          '<td><strong>' + item.name + '</strong><br><small class="text-muted">' + item.desc.substring(0, 50) + '…</small></td>' +
+          '<td>' + item.category + '</td>' +
+          '<td>₹' + item.price + '</td>' +
+          '<td>' + (item.veg ? '<span class="badge bg-success">Veg</span>' : '<span class="badge bg-danger">Non-Veg</span>') + '</td>' +
+          '<td><span class="badge bg-success">Available</span></td>' +
+        '</tr>';
+      }).join('');
+
+      // Top selling (first 3 menu items as demo)
+      var topEl = document.getElementById('topSelling');
+      topEl.innerHTML = restaurant.menu.slice(0, 3).map(function (item, i) {
+        var pct = 90 - i * 20;
+        return '<div class="d-flex justify-content-between mb-2"><span>' + item.name + '</span><span class="fw-semibold">' + (18 - i * 4) + ' orders</span></div>' +
+          '<div class="progress mb-3" style="height:6px;"><div class="progress-bar" style="width:' + pct + '%;background:var(--primary);"></div></div>';
+      }).join('');
+
+      // Section navigation
+      document.querySelectorAll('.sidebar-link[data-section]').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelectorAll('.sidebar-link').forEach(function (l) { l.classList.remove('active'); });
+          this.classList.add('active');
+          var sec = this.dataset.section;
+          document.getElementById('section-orders').classList.toggle('d-none', sec !== 'orders');
+          document.getElementById('section-menu').classList.toggle('d-none', sec !== 'menu');
+          document.getElementById('section-analytics').classList.toggle('d-none', sec !== 'analytics');
+        });
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', function () {
+        localStorage.removeItem('foodexpress_restaurant');
+      });
+    })();
+  </script>
 </body>
 </html>
