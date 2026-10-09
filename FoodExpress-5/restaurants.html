@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurants - FoodExpress</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .restaurant-img-real {
+      height: 180px;
+      width: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .filter-chip { user-select: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="home.html">
+        <span class="logo-icon"><i class="bi bi-basket2-fill"></i></span>
+        FoodExpress
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="restaurants.html">Restaurants</a></li>
+          <li class="nav-item"><a class="nav-link" href="order_tracking.html">Orders</a></li>
+          <li class="nav-item">
+            <a class="nav-link cart-badge" href="cart.html">
+              <i class="bi bi-cart3"></i> Cart
+              <span class="badge rounded-pill cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span class="user-name">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+              <li><a class="dropdown-item" href="index.html">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header page-header-restaurants">
+    <div class="container">
+      <h1><i class="bi bi-shop"></i> Restaurants Near You</h1>
+      <p class="mb-0 opacity-90">Discover the best food in your area</p>
+    </div>
+  </div>
+
+  <div class="container pb-5">
+    <div class="filter-bar">
+      <span class="fw-semibold me-2"><i class="bi bi-funnel"></i> Filters:</span>
+      <span class="filter-chip active" data-filter="all">All</span>
+      <span class="filter-chip" data-filter="rating">Rating 4.0+</span>
+      <span class="filter-chip" data-filter="fast">Fast Delivery</span>
+      <span class="filter-chip" data-filter="offers">Offers</span>
+      <span class="filter-chip" data-filter="pureveg">Pure Veg</span>
+      <span class="filter-chip" data-filter="budget">₹₹ Budget</span>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <select class="form-select form-select-sm" id="sortSelect" style="width: auto; border-radius: 50px;">
+          <option value="relevance">Sort: Relevance</option>
+          <option value="rating">Rating: High to Low</option>
+          <option value="time">Delivery Time</option>
+          <option value="cost-asc">Cost: Low to High</option>
+          <option value="cost-desc">Cost: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="text-muted small mb-3" id="resultCount"></p>
+    <div class="row g-4" id="restaurantGrid"></div>
+    <div id="noRestaurants" class="empty-state d-none">
+      <i class="bi bi-shop"></i>
+      <h5>No restaurants found</h5>
+      <p class="text-muted">Try changing your filters</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">&copy; 2026 FoodExpress. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/script.js"></script>
+    <script src="js/db.js"></script>
+  <script>
+    (async function () {
+      var allRestaurants = [];
+      var currentFilter = 'all';
+      var currentSort = 'rating';
+      var searchQ = (new URLSearchParams(window.location.search).get('search') || '').toLowerCase();
+
+      function mapDbRestaurant(r) {
+        return {
+          id: r.restaurantid,
+          name: r.name,
+          cuisine: r.cuisine || r.address || '',
+          tags: [],
+          rating: parseFloat(r.rating) || 4.0,
+          reviews: '',
+          time: r.openinghours || '30 mins',
+          timeMins: 30,
+          cost: '₹200 for two',
+          costLevel: 1,
+          offer: null,
+          pureVeg: false,
+          image: r.imageurl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80'
+        };
+      }
+
+      async function loadFromDB() {
+        var grid = document.getElementById('restaurantGrid');
+        if (grid) {
+          grid.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-warning"></div><p class="mt-2">Loading from database...</p></div>';
+        }
+        try {
+          // wait briefly for supabase client
+          for (var i = 0; i < 20 && !window.supabaseClient; i++) {
+            await new Promise(function (r) { setTimeout(r, 100); });
+          }
+          var rows = await DB.getRestaurants();
+          allRestaurants = rows.map(mapDbRestaurant);
+          render();
+        } catch (e) {
+          console.error(e);
+          if (grid) grid.innerHTML = '<div class="col-12 text-center text-danger">Failed to load restaurants from database. Check console.</div>';
+        }
+      }
+
+      function applyFilter(list) {
+        return list.filter(function (r) {
+          if (searchQ) {
+            var hay = (r.name + ' ' + r.cuisine).toLowerCase();
+            if (hay.indexOf(searchQ) === -1) return false;
+          }
+          return true;
+        });
+      }
+
+      function applySort(list) {
+        var arr = list.slice();
+        arr.sort(function (a, b) { return b.rating - a.rating; });
+        return arr;
+      }
+
+      function render() {
+        var filtered = applySort(applyFilter(allRestaurants));
+        var grid = document.getElementById('restaurantGrid');
+        var noRes = document.getElementById('noRestaurants');
+        var countEl = document.getElementById('resultCount');
+        if (!grid) return;
+
+        if (countEl) {
+          countEl.textContent = filtered.length + ' restaurant' + (filtered.length !== 1 ? 's' : '') + ' found'
+            + (searchQ ? ' for "' + searchQ + '"' : '');
+        }
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '';
+          if (noRes) noRes.classList.remove('d-none');
+          return;
+        }
+        if (noRes) noRes.classList.add('d-none');
+
+        grid.innerHTML = filtered.map(function (r) {
+          return '<div class="col-md-6 col-lg-4">' +
+            '<a href="menu.html?id=' + r.id + '" class="restaurant-card d-block position-relative">' +
+              '<img src="' + r.image + '" alt="' + r.name + '" class="restaurant-img-real" ' +
+                   'onerror="this.src=\'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80\'">' +
+              '<div class="restaurant-body">' +
+                '<h5 class="restaurant-name">' + r.name + '</h5>' +
+                '<div class="restaurant-meta">' +
+                  '<span class="rating-badge"><i class="bi bi-star-fill"></i> ' + r.rating + '</span>' +
+                  '<span>' + r.time + '</span>' +
+                  '<span>' + r.cost + '</span>' +
+                '</div>' +
+                '<p class="small text-muted mb-0">' + (r.cuisine || '') + '</p>' +
+              '</div>' +
+            '</a>' +
+          '</div>';
+        }).join('');
+      }
+
+      // Filter chips
+      document.querySelectorAll('.filter-chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          document.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
+          this.classList.add('active');
+          currentFilter = this.dataset.filter || 'all';
+          render();
+        });
+      });
+
+      loadFromDB();
+    })();
+  </script>
+</body>
+</html>
