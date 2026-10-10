@@ -1310,7 +1310,7 @@ body::after {
 
 /* Specific page moods */
 .page-header-restaurants::before {
-  background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=80');
+  background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=80');
   opacity: 0.5;
 }
 .page-header-cart::before {
@@ -1390,4 +1390,209 @@ body::after {
   font-family: var(--font-display);
   font-weight: 500;
   letter-spacing: -0.02em;
+}
+
+/* Order Tracking Timeline */
+.tracking-timeline {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 2rem 0;
+  padding: 0 10px;
+}
+.tracking-timeline::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 30px;
+  right: 30px;
+  height: 3px;
+  background: var(--line, #e2e8f0);
+  z-index: 1;
+}
+.tracking-step {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 1;
+}
+.tracking-step::before {
+  content: '';
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--line, #cbd5e1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.5rem auto;
+  font-family: 'bootstrap-icons';
+  font-size: 0.9rem;
+  color: #94a3b8;
+  transition: all 0.3s ease;
+}
+.tracking-step:nth-child(1)::before { content: '\F291'; }
+.tracking-step:nth-child(2)::before { content: '\F3AF'; }
+.tracking-step:nth-child(3)::before { content: '\F18F'; }
+.tracking-step:nth-child(4)::before { content: '\F1A9'; }
+.tracking-step:nth-child(5)::before { content: '\F26A'; }
+
+.tracking-step.completed::before {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: #ffffff;
+}
+.tracking-step.active::before {
+  background: var(--accent, #e11d48);
+  border-color: var(--accent, #e11d48);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.2);
+}
+.tracking-step h6 {
+  font-size: 0.825rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  color: var(--ink-soft, #475569);
+}
+.tracking-step.active h6, .tracking-step.completed h6 {
+  color: var(--ink, #0f172a);
+}
+.tracking-step p {
+  font-size: 0.725rem;
+  color: var(--muted, #94a3b8);
+  margin-bottom: 0;
+}
+
+@media (max-width: 767.98px) {
+  .tracking-timeline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding-left: 20px;
+  }
+  .tracking-timeline::before {
+    top: 18px;
+    bottom: 18px;
+    left: 37px;
+    width: 3px;
+    height: auto;
+    right: auto;
+  }
+  .tracking-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    text-align: left;
+  }
+  .tracking-step::before {
+    margin: 0;
+    flex-shrink: 0;
+  }
+}
+
+
+/* ========== Cart & Checkout layout polish ========== */
+.cart-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid #E7E5E4;
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  margin-bottom: 0.85rem;
+}
+.cart-item-img {
+  width: 88px !important;
+  height: 88px !important;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.cart-item .qty-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.cart-item .qty-controls button {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #E7E5E4;
+  background: #FAF9F7;
+  line-height: 1;
+}
+.cart-summary {
+  background: #fff;
+  border: 1px solid #E7E5E4;
+  border-radius: 14px;
+  padding: 1.5rem;
+  position: sticky;
+  top: 88px;
+}
+.cart-summary .summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.45rem 0;
+  font-size: 0.9rem;
+  color: #44403C;
+}
+.cart-summary .summary-total {
+  border-top: 1px solid #E7E5E4;
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #1C1917;
+}
+.checkout-section {
+  background: #fff;
+  border: 1px solid #E7E5E4;
+  border-radius: 14px;
+  padding: 1.5rem 1.6rem;
+  margin-bottom: 1.25rem;
+}
+.checkout-section h5 {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.35rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid #E7E5E4;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.65rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.payment-option:hover,
+.payment-option.selected {
+  border-color: #1C1917;
+  background: #FAF9F7;
+}
+.payment-option input {
+  accent-color: #1C1917;
+}
+.checkout-layout .col-lg-8,
+.checkout-layout .col-lg-4 {
+  margin-bottom: 1.5rem;
+}
+#cartItems .empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+#cartItems .empty-state i {
+  font-size: 3rem;
+  color: #A8A29E;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+@media (max-width: 991.98px) {
+  .cart-summary { position: static; }
 }

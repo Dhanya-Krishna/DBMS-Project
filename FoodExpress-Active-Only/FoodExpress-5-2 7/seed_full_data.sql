@@ -24,7 +24,7 @@ INSERT INTO address (customerid, street, city, pincode, landmark, isdefault) VAL
 (3, '78, Edappally', 'Kochi', '682024', 'Near Lulu Mall', true);
 
 INSERT INTO restaurant (restaurantid, name, address, phone, rating, openinghours, isactive, imageurl, cuisine) VALUES
-(1, 'Spice Garden', 'North Indian • Biryani • Curry', NULL, 4.5, '30 mins', true, 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80', 'North Indian • Biryani • Curry'),
+(1, 'Spice Garden', 'North Indian • Biryani • Curry', NULL, 4.5, '30 mins', true, 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80', 'North Indian • Biryani • Curry'),
 (2, 'Pizza Palace', 'Italian • Pizza • Pasta', NULL, 4.3, '25 mins', true, 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&q=80', 'Italian • Pizza • Pasta'),
 (3, 'Burger Hub', 'American • Burgers • Fast Food', NULL, 4.6, '20 mins', true, 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&q=80', 'American • Burgers • Fast Food'),
 (4, 'Dragon Wok', 'Chinese • Noodles • Asian', NULL, 4.4, '35 mins', true, 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80', 'Chinese • Noodles • Asian'),
@@ -32,14 +32,14 @@ INSERT INTO restaurant (restaurantid, name, address, phone, rating, openinghours
 (6, 'Green Bowl', 'Healthy • Salads • Bowls', NULL, 4.5, '22 mins', true, 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80', 'Healthy • Salads • Bowls'),
 (7, 'Chai & More', 'Cafe • Snacks • Beverages', NULL, 4.2, '15 mins', true, 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80', 'Cafe • Snacks • Beverages'),
 (8, 'Coastal Catch', 'Seafood • Coastal • South Indian', NULL, 4.6, '40 mins', true, 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80', 'Seafood • Coastal • South Indian'),
-(9, 'Taco Fiesta', 'Mexican • Tacos • Wraps', NULL, 4.3, '30 mins', true, 'https://images.unsplash.com/photo-1565299585323-38174c4aabed?w=800&q=80', 'Mexican • Tacos • Wraps');
+(9, 'Taco Fiesta', 'Mexican • Tacos • Wraps', NULL, 4.3, '30 mins', true, 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800&q=80', 'Mexican • Tacos • Wraps');
 
 SELECT setval(pg_get_serial_sequence('restaurant','restaurantid'), (SELECT MAX(restaurantid) FROM restaurant));
 
 INSERT INTO menuitem (restaurantid, name, description, price, category, isveg, isavailable, imageurl) VALUES
 (1, 'Paneer Tikka', 'Cottage cheese marinated in spices & grilled to perfection', 220, 'Starters', true, true, 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80'),
 (1, 'Chicken Tikka', 'Boneless chicken chunks marinated in yogurt & spices', 260, 'Starters', false, true, 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80'),
-(1, 'Veg Seekh Kebab', 'Minced vegetables skewered and grilled with spices', 190, 'Starters', true, true, 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&q=80'),
+(1, 'Veg Seekh Kebab', 'Minced vegetables skewered and grilled with spices', 190, 'Starters', true, true, 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=400&q=80'),
 (1, 'Butter Chicken', 'Tender chicken in rich tomato-butter gravy', 320, 'Main Course', false, true, 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&q=80'),
 (1, 'Dal Makhani', 'Slow-cooked black lentils in creamy tomato gravy', 180, 'Main Course', true, true, 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80'),
 (1, 'Palak Paneer', 'Cottage cheese cubes in smooth spinach gravy', 210, 'Main Course', true, true, 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80'),

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Tracking - FoodExpress</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="home.html">
+        <span class="logo-icon"><i class="bi bi-basket2-fill"></i></span>
+        FoodExpress
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="restaurants.html">Restaurants</a></li>
+          <li class="nav-item"><a class="nav-link active" href="order_tracking.html">Orders</a></li>
+          <li class="nav-item">
+            <a class="nav-link cart-badge" href="cart.html">
+              <i class="bi bi-cart3"></i> Cart
+              <span class="badge rounded-pill cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span class="user-name">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+              <li><a class="dropdown-item" href="index.html" onclick="localStorage.removeItem('foodexpress_user');localStorage.removeItem('foodexpress_restaurant');localStorage.removeItem('foodexpress_delivery');">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header page-header-track">
+    <div class="container">
+      <h1><i class="bi bi-geo-alt"></i> Track Your Order</h1>
+    </div>
+  </div>
+
+  <div class="container pb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8" id="orderTrackWrap">
+        <div class="text-center py-5 bg-white rounded-3 shadow-sm">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-3 text-muted">Loading order details from database...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">&copy; 2026 FoodExpress. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/db.js"></script>
+  
+  <script>
+    (async function () {
+      const wrap = document.getElementById('orderTrackWrap');
+      let isFirstLoad = true;
+      let lastStateHash = '';
+
+      function getStatusPill(status) {
+        const s = (status || '').toLowerCase();
+        if (s.includes('deliver') && !s.includes('out'))
+          return '<span class="status-badge status-delivered"><i class="bi bi-check-circle-fill me-1"></i> Delivered</span>';
+        if (s.includes('out'))
+          return '<span class="status-badge bg-warning text-dark"><i class="bi bi-bicycle me-1"></i> Out for Delivery</span>';
+        if (s.includes('ready'))
+          return '<span class="status-badge bg-info text-dark"><i class="bi bi-bag-check me-1"></i> Ready</span>';
+        if (s.includes('prepar'))
+          return '<span class="status-badge status-preparing"><i class="bi bi-fire me-1"></i> Preparing</span>';
+        return '<span class="status-badge status-preparing"><i class="bi bi-clock-history me-1"></i> Placed</span>';
+      }
+
+      function formatTime(iso) {
+        if (!iso) return '—';
+        try { return new Date(iso).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }); } catch { return '—'; }
+      }
+
+      async function waitClient() {
+        for (let i = 0; i < 30 && !window.supabaseClient; i++) await new Promise(r => setTimeout(r, 100));
+      }
+
+      async function loadOrder() {
+        if (!wrap) return;
+
+        // Skip refresh if user is currently typing inside a review box
+        const activeEl = document.activeElement;
+        if (activeEl && (activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'INPUT')) {
+          if (activeEl.id && activeEl.id.startsWith('revC-')) {
+            return;
+          }
+        }
+
+        if (isFirstLoad && !wrap.children.length) {
+          wrap.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-3 text-muted">Loading orders...</p></div>';
+        }
+
+        await waitClient();
+
+        try {
+          let user = null;
+          try { user = JSON.parse(localStorage.getItem('foodexpress_user') || 'null'); } catch {}
+
+          const params = new URLSearchParams(location.search);
+          const urlOrderStr = params.get('order'); // optional deep-link after checkout
+
+          let customerId = user ? user.customerId : null;
+          if (!customerId && user && user.email && window.DB && DB.findCustomerByEmail) {
+            const c = await DB.findCustomerByEmail(user.email).catch(() => null);
+            if (c) customerId = c.customerid;
+          }
+
+          // ONLY these statuses appear on the Orders page (not yet delivered)
+          function isActiveOrder(status) {
+            const s = (status || '').toLowerCase().replace(/[_\s-]+/g, '');
+            // Explicitly reject delivered / finished
+            if (s === 'delivered' || s === 'complete' || s === 'completed' ||
+                s === 'cancelled' || s === 'canceled' || s === 'failed') {
+              return false;
+            }
+            // Accept in-progress only
+            if (s === 'placed' || s === 'pending' || s === 'confirmed' || s === 'new' ||
+                s === 'preparing' || s === 'accepted' || s === 'ready' ||
+                s === 'outfordelivery' || s === 'outfor delivery' || s.indexOf('outfor') === 0) {
+              return true;
+            }
+            // If status contains "out" (out for delivery) keep it
+            if (s.indexOf('out') >= 0 && s.indexOf('deliver') >= 0) return true;
+            // If status looks delivered, drop it
+            if (s.indexOf('deliver') >= 0 && s.indexOf('out') < 0) return false;
+            if (s.indexOf('complete') >= 0) return false;
+            // Unknown non-empty status that is not delivered → treat as active (e.g. custom)
+            return !!s && s.indexOf('deliver') < 0;
+          }
+          function isDeliveredStatus(status) { return !isActiveOrder(status); }
+
+          let orders = [];
+
+          // Primary: load ALL of this customer's orders that are not yet delivered
+          if (customerId && window.DB && DB.getCustomerOrders) {
+            const custOrders = await DB.getCustomerOrders(customerId).catch(() => []);
+            (custOrders || []).forEach(function (o) {
+              if (isActiveOrder(o.status)) orders.push(o);
+            });
+          }
+
+          // If opened right after checkout with ?order=ids, ensure those are included
+          // (and expand combined siblings) even if customerId was slow to resolve
+          if (urlOrderStr && urlOrderStr !== 'null') {
+            const ids = String(urlOrderStr).split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+            for (const id of ids) {
+              const o = await DB.getOrderDetails(id).catch(function () { return null; });
+              if (!o) continue;
+              const list = Array.isArray(o) ? o : [o];
+              list.forEach(function (item) {
+                if (!isActiveOrder(item.status)) return;
+                if (!orders.some(function (ex) { return String(ex.orderid) === String(item.orderid); })) {
+                  orders.push(item);
+                }
+              });
+            }
+          }
+
+          // Expand any combined-order groups so all restaurant legs appear
+          if (window.DB && DB.client && DB.client()) {
+            const combinedIds = {};
+            orders.forEach(function (o) {
+              if (o.combinedorderid) combinedIds[String(o.combinedorderid)] = true;
+            });
+            for (const cid of Object.keys(combinedIds)) {
+              try {
+                const { data: siblings } = await DB.client()
+                  .from('orders')
+                  .select(`*,
+                    restaurant:restaurantid ( name, address, phone ),
+                    customer:customerid ( name, phone, email ),
+                    address:addressid ( street, city, pincode, landmark ),
+                    deliverypartner:deliverypartnerid ( name, phone, rating ),
+                    orderitem ( itemid, quantity, unitprice, subtotal, menuitem:itemid ( name, imageurl ) )
+                  `)
+                  .eq('combinedorderid', cid);
+                (siblings || []).forEach(function (item) {
+                  if (!isActiveOrder(item.status)) return;
+                  if (!orders.some(function (ex) { return String(ex.orderid) === String(item.orderid); })) {
+                    orders.push(item);
+                  }
+                });
+              } catch (e) { console.warn('sibling load', e); }
+            }
+          }
+
+          // Enrich thin list rows (from getCustomerOrders) with full details when needed
+          const enriched = [];
+          for (const o of orders) {
+            if (o.orderitem && o.restaurant) {
+              enriched.push(o);
+              continue;
+            }
+            try {
+              const full = await DB.getOrderDetails(o.orderid);
+              if (full && !Array.isArray(full)) enriched.push(full);
+              else if (Array.isArray(full) && full[0]) enriched.push(full[0]);
+              else enriched.push(o);
+            } catch (e) {
+              enriched.push(o);
+            }
+          }
+          orders = enriched.filter(function (o) { return isActiveOrder(o.status); });
+
+          if (!orders.length) {
+            isFirstLoad = false;
+            wrap.innerHTML = '<div class="checkout-section text-center py-5"><i class="bi bi-bag-x fs-1 text-muted"></i><p class="text-muted mt-2 mb-0">No active orders. Orders being prepared or out for delivery will show here.</p><a href="home.html" class="btn btn-primary-custom mt-3">Browse Restaurants</a></div>';
+            return;
+          }
+
+          // Final hard filter: drop anything already delivered
+          orders = orders.filter(function (o) { return isActiveOrder(o.status); });
+
+          // De-duplicate orders by orderid
+          const map = new Map();
+          orders.forEach(o => map.set(String(o.orderid), o));
+          orders = Array.from(map.values());
+
+          // Sort orders: newest first
+          orders.sort((a, b) => new Date(b.orderdatetime || 0) - new Date(a.orderdatetime || 0));
+
+          // State hash check prevents DOM rebuilds if no status/order changed
+          const currentStateHash = orders.map(o => `${o.orderid}:${o.status}:${o.deliverypartnerid}`).join('|');
+          if (currentStateHash === lastStateHash && !isFirstLoad) {
+            return;
+          }
+
+          // Group orders into independent cards.
+          // Orders from separate checkouts or at different stages are kept in separate cards.
+          const groups = {};
+          orders.forEach(o => {
+            const stage = (o.status || 'placed').toLowerCase();
+            const key = o.combinedorderid ? `combined_${o.combinedorderid}_${stage}` : `order_${o.orderid}`;
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(o);
+          });
+
+          let html = '';
+          const reviewJobs = [];
+
+          Object.entries(groups).forEach(([groupKey, groupOrders]) => {
+            const isMerged = groupOrders.length > 1;
+            const first = groupOrders[0];
+            const combinedId = first.combinedorderid || first.orderid;
+
+            const statuses = groupOrders.map(o => (o.status || 'Placed').toLowerCase());
+            const allDelivered = statuses.every(s => s.includes('deliver') && !s.includes('out'));
+            const anyOut = statuses.some(s => s.includes('out'));
+            const allReady = statuses.every(s => s.includes('ready') || s.includes('deliver') || s.includes('out'));
+            const anyPrep = statuses.some(s => s.includes('prepar') || s.includes('ready') || s.includes('out') || s.includes('deliver'));
+
+            let overallLabel = 'Placed';
+            if (allDelivered) overallLabel = 'Delivered';
+            else if (anyOut) overallLabel = 'Out for Delivery';
+            else if (allReady) overallLabel = 'Ready';
+            else if (anyPrep) overallLabel = 'Preparing';
+
+            const step1 = 'completed';
+            const step2 = anyPrep ? 'completed' : '';
+            const step3 = (allReady || anyOut || allDelivered) ? 'completed' : (anyPrep ? 'active' : '');
+            const step4 = (anyOut || allDelivered) ? 'completed' : '';
+            const step5 = allDelivered ? 'completed' : (anyOut ? 'active' : '');
+
+            const addr = first.address
+              ? ((first.address.street || '') + ', ' + (first.address.city || '') + (first.address.pincode ? ' - ' + first.address.pincode : ''))
+              : 'Delivery Address';
+
+            let partnerHtml = '';
+            const partnerOrder = groupOrders.find(o => o.deliverypartnerid);
+            if (partnerOrder && (anyOut || allDelivered)) {
+              const pname = partnerOrder.deliverypartner
+                ? partnerOrder.deliverypartner.name
+                : (partnerOrder.deliveryPartnerName || 'Delivery Partner');
+              const prating = partnerOrder.deliverypartner ? partnerOrder.deliverypartner.rating : '';
+              partnerHtml =
+                '<div class="border rounded-3 p-3 mt-3 bg-light">' +
+                '<h6 class="fw-bold mb-2"><i class="bi bi-bicycle me-1"></i> Delivery Partner</h6>' +
+                '<p class="mb-0">' + pname + (prating ? ' · ★ ' + prating : '') + '</p>' +
+                '</div>';
+            }
+
+            let subHtml = '';
+            let grandTotal = 0;
+            groupOrders.forEach(order => {
+              const restName = order.restaurant ? order.restaurant.name : 'Restaurant';
+              const items = (order.orderitem || []).map(oi => {
+                const n = oi.menuitem ? oi.menuitem.name : 'Item';
+                return '<div class="d-flex justify-content-between small py-1"><span>' + n + ' ×' + oi.quantity + '</span><span>₹' + (oi.subtotal || 0) + '</span></div>';
+              }).join('');
+              const sub = (parseFloat(order.subtotal) || 0);
+              const fee = (parseFloat(order.deliveryfee) || 0);
+              grandTotal += sub + fee;
+              subHtml +=
+                '<div class="border rounded-3 p-3 mb-2">' +
+                '<div class="d-flex justify-content-between align-items-center mb-2">' +
+                '<strong>' + restName + '</strong>' +
+                '<span class="small">Order #' + order.orderid + ' · ' + getStatusPill(order.status) + '</span>' +
+                '</div>' +
+                (items || '<p class="small text-muted mb-0">Items</p>') +
+                '<div class="d-flex justify-content-between small fw-semibold mt-2"><span>Subtotal</span><span>₹' + (sub + fee) + '</span></div>' +
+                '</div>';
+            });
+
+            const cardTitle = isMerged
+              ? ('Combined Order #' + combinedId)
+              : ('Order #' + first.orderid + (first.restaurant ? ' — ' + first.restaurant.name : ''));
+
+            html +=
+              '<div class="checkout-section mb-4 shadow-sm" id="card-' + groupKey + '">' +
+              '<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">' +
+              '<div><h5 class="fw-bold mb-1">' + cardTitle + '</h5>' +
+              '<p class="text-muted small mb-0">Placed ' + formatTime(first.orderdatetime) + '</p></div>' +
+              '<div>' + getStatusPill(overallLabel) + '</div></div>' +
+              '<div class="tracking-timeline mb-3">' +
+              '<div class="tracking-step ' + step1 + '"><h6>Confirmed</h6><p>Order received</p></div>' +
+              '<div class="tracking-step ' + step2 + '"><h6>Accepted</h6><p>Restaurant confirmed</p></div>' +
+              '<div class="tracking-step ' + step3 + '"><h6>Preparing</h6><p>Food being prepared</p></div>' +
+              '<div class="tracking-step ' + step4 + '"><h6>On the way</h6><p>Out for delivery</p></div>' +
+              '<div class="tracking-step ' + step5 + '"><h6>Delivered</h6><p>Enjoy your meal</p></div>' +
+              '</div>' +
+              subHtml +
+              '<div class="d-flex justify-content-between fw-bold mt-2 pt-2 border-top"><span>Total paid</span><span>₹' + grandTotal + '</span></div>' +
+              '<p class="small text-muted mt-2 mb-0"><i class="bi bi-geo-alt me-1"></i>' + addr + '</p>' +
+              partnerHtml +
+              '<div id="reviewMount-' + groupKey + '" class="mt-3"></div>' +
+              '</div>';
+
+            reviewJobs.push({ key: groupKey, orders: groupOrders, allDelivered: allDelivered, combinedId: combinedId });
+          });
+
+          html += '<div class="text-center mb-4"><a href="home.html" class="btn btn-primary-custom px-4">Back to Home</a></div>';
+
+          wrap.innerHTML = html;
+          lastStateHash = currentStateHash;
+          isFirstLoad = false;
+
+          // Mount review forms
+          for (const job of reviewJobs) {
+            if (!job.allDelivered) continue;
+            const mount = document.getElementById('reviewMount-' + job.key);
+            if (!mount) continue;
+
+            const primaryOrder = job.orders[0];
+            const primaryOrderId = primaryOrder.orderid;
+
+            try {
+              const existing = await DB.getReviewForOrder(primaryOrderId);
+              if (existing) {
+                mount.innerHTML =
+                  '<div class="border rounded-3 p-3 bg-light">' +
+                  '<strong>Your rating for this order</strong>' +
+                  '<div class="text-warning fs-5">' + '★'.repeat(existing.rating || 0) + '</div>' +
+                  '<p class="small text-muted mb-0">' + (existing.comment || '') + '</p>' +
+                  '</div>';
+                continue;
+              }
+            } catch (e) {}
+
+            mount.innerHTML =
+              '<div class="border rounded-3 p-3 bg-light" id="reviewBox-' + job.key + '">' +
+              '<strong>Rate this order</strong>' +
+              '<div class="my-2 star-row" id="stars-' + job.key + '" style="font-size:1.75rem;line-height:1;cursor:pointer;user-select:none;">' +
+              [1,2,3,4,5].map(n =>
+                '<span class="star-btn" data-r="' + n + '" style="color:#D1D5DB;margin-right:4px;">★</span>'
+              ).join('') +
+              '</div>' +
+              '<textarea class="form-control form-control-custom mb-2" rows="2" id="revC-' + job.key + '" placeholder="Optional comment"></textarea>' +
+              '<button type="button" class="btn btn-primary-custom btn-sm" id="revBtn-' + job.key + '">Submit Review</button>' +
+              '<div class="small mt-1" id="revMsg-' + job.key + '"></div>' +
+              '</div>';
+
+            let chosen = 0;
+            function paintStars(n) {
+              mount.querySelectorAll('.star-btn').forEach(function (x) {
+                const v = +x.dataset.r;
+                x.style.color = v <= n ? '#FBBF24' : '#D1D5DB';
+              });
+            }
+            mount.querySelectorAll('.star-btn').forEach(b => {
+              b.onclick = function () {
+                chosen = +this.dataset.r;
+                paintStars(chosen);
+              };
+              b.onmouseenter = function () { paintStars(+this.dataset.r); };
+              b.onmouseleave = function () { paintStars(chosen); };
+            });
+
+            document.getElementById('revBtn-' + job.key).onclick = async function () {
+              const msg = document.getElementById('revMsg-' + job.key);
+              if (!chosen) { msg.className = 'small mt-1 text-danger'; msg.textContent = 'Please select a star rating'; return; }
+              this.disabled = true;
+              this.textContent = 'Submitting...';
+              try {
+                let uId = customerId;
+                if (!uId && user && user.email) {
+                  const c = await DB.findCustomerByEmail(user.email);
+                  if (c) uId = c.customerid;
+                }
+                await DB.createReview({
+                  orderId: primaryOrderId,
+                  customerId: uId,
+                  restaurantId: primaryOrder.restaurantid,
+                  rating: chosen,
+                  comment: (document.getElementById('revC-' + job.key).value || '')
+                });
+                mount.innerHTML =
+                  '<div class="alert alert-success mb-0"><i class="bi bi-check-circle me-1"></i> Thanks! Your ' +
+                  chosen + '-star review was submitted.</div>';
+              } catch (err) {
+                msg.className = 'small mt-1 text-danger';
+                msg.textContent = err.message || String(err);
+                this.disabled = false;
+                this.textContent = 'Submit Review';
+              }
+            };
+          }
+
+        } catch (err) {
+          console.error(err);
+          if (isFirstLoad) {
+            wrap.innerHTML = '<div class="alert alert-danger">Failed to load tracking: ' + (err.message || err) + '</div>';
+          }
+        }
+      }
+
+      loadOrder();
+      setInterval(loadOrder, 6000);
+
+      window.addEventListener('ordersUpdated', function () { loadOrder(); });
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'foodexpress_orders_updated') loadOrder();
+      });
+    })();
+  </script>
+
+</body>
+</html>

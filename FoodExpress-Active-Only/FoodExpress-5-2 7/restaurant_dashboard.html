@@ -129,6 +129,23 @@
             <h2 class="dash-panel-title">My Menu</h2>
             <span class="badge-soft" id="menuCount">0 items</span>
           </div>
+          <button type="button" class="btn-dash-sm solid" id="btnShowAddItem">+ Add Item</button>
+        </div>
+        <div id="addItemForm" class="p-3 border-bottom d-none" style="background:#FAF9F7;">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-3"><label class="small">Name</label><input id="newItemName" class="form-control form-control-sm" placeholder="Item name"></div>
+            <div class="col-md-2"><label class="small">Category</label><input id="newItemCat" class="form-control form-control-sm" placeholder="Starters"></div>
+            <div class="col-md-2"><label class="small">Price ₹</label><input id="newItemPrice" type="number" min="1" class="form-control form-control-sm" placeholder="199"></div>
+            <div class="col-md-2"><label class="small">Type</label>
+              <select id="newItemVeg" class="form-select form-select-sm"><option value="1">Veg</option><option value="0">Non-veg</option></select>
+            </div>
+            <div class="col-md-3"><button type="button" class="btn btn-primary-custom btn-sm w-100" id="btnAddItem">Save Item</button></div>
+          </div>
+          <div class="row g-2 mt-1">
+            <div class="col-md-6"><input id="newItemDesc" class="form-control form-control-sm" placeholder="Short description (optional)"></div>
+            <div class="col-md-6"><input id="newItemImage" class="form-control form-control-sm" placeholder="Image URL (https://...)"></div>
+          </div>
+          <div id="addItemMsg" class="small mt-2 text-muted"></div>
         </div>
         <div class="table-responsive">
           <table class="dash-table">
@@ -139,10 +156,11 @@
                 <th>Price</th>
                 <th>Type</th>
                 <th>Availability</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="menuBody">
-              <tr><td colspan="5" class="text-center py-4 text-muted">Loading menu...</td></tr>
+              <tr><td colspan="6" class="text-center py-4 text-muted">Loading menu...</td></tr>
             </tbody>
           </table>
         </div>
@@ -215,9 +233,110 @@
           document.querySelectorAll('[id^="section-"]').forEach(el => {
             el.classList.toggle('d-none', el.id !== 'section-' + sec);
           });
-          if (sec === 'menu') loadMenu();
+          if (sec === 'menu') 
+      document.getElementById('btnShowAddItem')?.addEventListener('click', function () {
+        document.getElementById('addItemForm')?.classList.toggle('d-none');
+      });
+      document.getElementById('btnAddItem')?.addEventListener('click', async function () {
+        const msg = document.getElementById('addItemMsg');
+        const name = document.getElementById('newItemName')?.value.trim();
+        const price = parseFloat(document.getElementById('newItemPrice')?.value || '0');
+        if (!name || !price) { if (msg) msg.textContent = 'Name and price required'; return; }
+        this.disabled = true;
+        try {
+          if (window.DB && DB.addMenuItem) {
+            await DB.addMenuItem(restId, {
+              name: name,
+              price: price,
+              category: document.getElementById('newItemCat')?.value.trim() || 'General',
+              isveg: document.getElementById('newItemVeg')?.value === '1',
+              description: document.getElementById('newItemDesc')?.value.trim() || '',
+              imageurl: document.getElementById('newItemImage')?.value.trim() || null,
+              isavailable: true
+            });
+          } else {
+            // Direct supabase insert
+            await waitClient();
+            const { error } = await window.supabaseClient.from('menuitem').insert([{
+              restaurantid: restId,
+              name: name,
+              price: price,
+              category: document.getElementById('newItemCat')?.value.trim() || 'General',
+              isveg: document.getElementById('newItemVeg')?.value === '1',
+              description: document.getElementById('newItemDesc')?.value.trim() || null,
+              imageurl: document.getElementById('newItemImage')?.value.trim() || null,
+              isavailable: true
+            }]);
+            if (error) throw error;
+          }
+          if (msg) { msg.className = 'small mt-2 text-success'; msg.textContent = 'Item added to menu'; }
+          document.getElementById('newItemName').value = '';
+          document.getElementById('newItemPrice').value = '';
+          loadMenu();
+        } catch (e) {
+          if (msg) { msg.className = 'small mt-2 text-danger'; msg.textContent = e.message || String(e); }
+        }
+        this.disabled = false;
+      });
+
+      loadMenu();
           if (sec === 'orders') loadOrders();
+          if (sec === 'menu') loadMenu();
+          if (sec === 'analytics') loadAnalytics && loadAnalytics();
         });
+      });
+
+      // Pause / resume accepting new orders
+      let isAcceptingOrders = localStorage.getItem('fe_rest_pause_' + restId) !== '1';
+      function updatePauseUI() {
+        const btn = document.getElementById('pauseBtn');
+        if (!btn) return;
+        if (isAcceptingOrders) {
+          btn.innerHTML = '<i class="bi bi-pause-fill"></i> Pause Orders';
+          btn.classList.remove('btn-dash-solid');
+        } else {
+          btn.innerHTML = '<i class="bi bi-play-fill"></i> Resume Orders';
+          btn.classList.add('btn-dash-solid');
+        }
+      }
+      updatePauseUI();
+
+      // Sync pause state from database isactive
+      (async function syncPauseFromDb() {
+        try {
+          await waitClient();
+          if (!window.supabaseClient) return;
+          const { data } = await window.supabaseClient
+            .from('restaurant')
+            .select('isactive')
+            .eq('restaurantid', restId)
+            .maybeSingle();
+          if (data && data.isactive != null) {
+            isAcceptingOrders = !!data.isactive;
+            localStorage.setItem('fe_rest_pause_' + restId, isAcceptingOrders ? '0' : '1');
+            updatePauseUI();
+          }
+        } catch (e) {}
+      })();
+
+      document.getElementById('pauseBtn')?.addEventListener('click', async function () {
+        isAcceptingOrders = !isAcceptingOrders;
+        localStorage.setItem('fe_rest_pause_' + restId, isAcceptingOrders ? '0' : '1');
+        // Reflect on customer side via restaurant.isactive
+        try {
+          await waitClient();
+          if (window.supabaseClient) {
+            const { error } = await window.supabaseClient
+              .from('restaurant')
+              .update({ isactive: isAcceptingOrders })
+              .eq('restaurantid', restId);
+            if (error) console.warn('pause DB update', error);
+          }
+        } catch (e) { console.warn(e); }
+        updatePauseUI();
+        alert(isAcceptingOrders
+          ? 'Orders resumed — customers can order from your restaurant again.'
+          : 'Orders paused — customers cannot place new orders from your restaurant.');
       });
 
       function statusClass(s) {
@@ -243,7 +362,13 @@
       function formatTime(iso) {
         if (!iso) return '—';
         try {
-          return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const d = new Date(iso);
+          if (isNaN(d.getTime())) return '—';
+          // Full local date + time so order time is accurate
+          return d.toLocaleString([], {
+            day: '2-digit', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: true
+          });
         } catch { return '—'; }
       }
 
@@ -267,7 +392,7 @@
             .order('category');
           if (error) throw error;
           const items = data || [];
-          document.getElementById('menuCount').textContent = items.length + ' items';
+          document.getElementById('menuCount').textContent = items.length + ' items'; /* toggle bound below */
           if (!items.length) {
             tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">No menu items in database</td></tr>';
             return;
@@ -283,8 +408,24 @@
               '<td>₹' + it.price + '</td>' +
               '<td>' + (it.isveg ? '<span class="st-pill st-ready">Veg</span>' : '<span class="st-pill st-preparing">Non-veg</span>') + '</td>' +
               '<td>' + (it.isavailable !== false ? '<span class="st-pill st-ready">Available</span>' : '<span class="st-pill st-delivered">Off</span>') + '</td>' +
+              '<td><button type="button" class="btn-dash-sm solid btn-toggle-avail" data-id="' + it.itemid + '" data-on="' + (it.isavailable !== false ? '0' : '1') + '">' + (it.isavailable !== false ? 'Mark Off' : 'Mark On') + '</button></td>' +
             '</tr>';
           }).join('');
+
+          tbody.querySelectorAll('.btn-toggle-avail').forEach(btn => {
+            btn.addEventListener('click', async function () {
+              this.disabled = true;
+              try {
+                const on = this.dataset.on === '1';
+                if (window.DB && DB.toggleMenuAvailability) {
+                  await DB.toggleMenuAvailability(this.dataset.id, on);
+                } else {
+                  await window.supabaseClient.from('menuitem').update({ isavailable: on }).eq('itemid', this.dataset.id);
+                }
+                loadMenu();
+              } catch (e) { alert(e.message || e); this.disabled = false; }
+            });
+          });
         } catch (e) {
           console.error(e);
           tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">' + e.message + '</td></tr>';
@@ -391,9 +532,14 @@
         });
       });
 
+      window.addEventListener('ordersUpdated', loadOrders);
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'foodexpress_orders_updated') loadOrders();
+      });
+
       loadOrders();
       loadMenu();
-      setInterval(loadOrders, 15000);
+      setInterval(loadOrders, 5000);
     })();
   </script>
 </body>

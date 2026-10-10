@@ -46,7 +46,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-              <li><a class="dropdown-item" href="index.html">Logout</a></li>
+              <li><a class="dropdown-item" href="index.html" onclick="localStorage.removeItem('foodexpress_user');localStorage.removeItem('foodexpress_restaurant');localStorage.removeItem('foodexpress_delivery');">Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -132,6 +132,8 @@
   <script src="js/db.js"></script>
   <script>
     (async function () {
+      let restaurantPaused = false;
+
       const params = new URLSearchParams(window.location.search);
       const restId = params.get('id') || '1';
       let restaurant = null;
@@ -150,7 +152,26 @@
 
         await waitClient();
         restaurant = await DB.getRestaurant(restId);
+        restaurantPaused = !!(restaurant && (restaurant.isactive === false || restaurant.isactive === 0 || restaurant.isactive === 'false'));
+        if (restaurantPaused) {
+          let banner = document.getElementById('pausedBanner');
+          if (!banner) {
+            banner = document.createElement('div');
+            banner.id = 'pausedBanner';
+            banner.className = 'alert alert-warning text-center mx-3 mt-3';
+            banner.innerHTML = '<i class="bi bi-pause-circle me-1"></i> <strong>Restaurant is not accepting orders right now.</strong> Ordering is frozen until they resume.';
+            const host = document.getElementById('menuGrid');
+            if (host && host.parentNode) host.parentNode.insertBefore(banner, host);
+          }
+        }
         menuItems = await DB.getMenuItems(restId);
+        if (menuItems) {
+          menuItems.forEach(function (i) {
+            if (i.name === 'Veg Seekh Kebab' || (i.imageurl && i.imageurl.indexOf('1603894584373') !== -1)) {
+              i.imageurl = 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=400&q=80';
+            }
+          });
+        }
 
         if (restaurant) {
           const nameEl = document.getElementById('restName');
@@ -226,6 +247,12 @@
           '</div>';
         }).join('');
 
+        if (restaurantPaused) {
+          grid.querySelectorAll('.btn-add-cart, .btn-card-inc, .btn-card-dec').forEach(function (b) {
+            b.disabled = true; b.classList.add('disabled'); b.textContent = 'Unavailable';
+          });
+          return;
+        }
         grid.querySelectorAll('.btn-add-cart, .btn-card-inc').forEach(btn => {
           btn.addEventListener('click', function (e) {
             e.preventDefault();
@@ -237,6 +264,7 @@
             if (existing) {
               Cart.updateQty(itemId, existing.qty + 1);
             } else {
+              if (restaurantPaused) { alert('This restaurant is not accepting orders right now.'); return; }
               Cart.addItem({
                 id: itemId,
                 name: this.dataset.name,

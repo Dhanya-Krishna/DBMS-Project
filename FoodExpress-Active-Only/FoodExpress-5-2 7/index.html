@@ -44,11 +44,6 @@
       <p class="hero-kicker">FoodExpress</p>
       <h1 class="hero-title">Inspired flavours,<br><span>delivered.</span></h1>
       <p class="hero-subtitle">Exceptional restaurants near you. Order in moments. Enjoy at your door.</p>
-      <div class="search-box hero-search mx-auto">
-        <i class="bi bi-geo-alt ms-3"></i>
-        <input type="text" id="searchInput" placeholder="Enter your delivery location...">
-        <button class="btn btn-primary-custom" id="searchBtn">Find Food</button>
-      </div>
       <div class="hero-stats">
         <span>500+ Restaurants</span>
         <span class="dot"></span>
@@ -121,9 +116,9 @@
       </div>
       <div class="row g-4">
         <div class="col-md-6 col-lg-3">
-          <a href="menu.html?id=1" class="restaurant-card d-block position-relative">
+          <a href="register.html" data-menu-id="1" class="restaurant-card d-block position-relative" onclick="sessionStorage.setItem('fe_intent','signup'); location.href='register.html'; return false;">
             <span class="offer-badge">20% OFF</span>
-            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80" alt="Spice Garden"
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80" alt="Spice Garden"
               class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
               <h5 class="restaurant-name">Spice Garden</h5>
@@ -140,7 +135,7 @@
           </a>
         </div>
         <div class="col-md-6 col-lg-3">
-          <a href="menu.html?id=2" class="restaurant-card d-block position-relative">
+          <a href="register.html" data-menu-id="2" class="restaurant-card d-block position-relative" onclick="sessionStorage.setItem('fe_intent','signup'); location.href='register.html'; return false;">
             <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80" alt="Pizza Palace"
               class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
@@ -158,7 +153,7 @@
           </a>
         </div>
         <div class="col-md-6 col-lg-3">
-          <a href="menu.html?id=3" class="restaurant-card d-block position-relative">
+          <a href="register.html" data-menu-id="3" class="restaurant-card d-block position-relative" onclick="sessionStorage.setItem('fe_intent','signup'); location.href='register.html'; return false;">
             <span class="offer-badge">Free Delivery</span>
             <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80" alt="Burger Hub"
               class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
@@ -177,7 +172,7 @@
           </a>
         </div>
         <div class="col-md-6 col-lg-3">
-          <a href="menu.html?id=4" class="restaurant-card d-block position-relative">
+          <a href="register.html" data-menu-id="4" class="restaurant-card d-block position-relative" onclick="sessionStorage.setItem('fe_intent','signup'); location.href='register.html'; return false;">
             <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&q=80" alt="Dragon Wok"
               class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
@@ -280,6 +275,21 @@
   <script src="js/supabaseClient.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/script.js"></script>
+
+  
+  
+  <script>
+    // Public landing: restaurant cards ALWAYS open Sign Up (never menu)
+    document.querySelectorAll('a.restaurant-card').forEach(function (a) {
+      a.setAttribute('href', 'register.html');
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = 'register.html';
+      });
+    });
+  </script>
+
+
 </body>
 
 </html>

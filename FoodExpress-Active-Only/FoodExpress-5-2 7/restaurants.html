@@ -46,7 +46,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-              <li><a class="dropdown-item" href="index.html">Logout</a></li>
+              <li><a class="dropdown-item" href="index.html" onclick="localStorage.removeItem('foodexpress_user');localStorage.removeItem('foodexpress_restaurant');localStorage.removeItem('foodexpress_delivery');">Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -105,26 +105,72 @@
     <script src="js/db.js"></script>
   <script>
     (async function () {
+
+      function feIsLoggedIn() {
+        try {
+          var u = JSON.parse(localStorage.getItem('foodexpress_user') || 'null');
+          return !!(u && u.email);
+        } catch (e) { return false; }
+      }
+      function feRestaurantHref(id) {
+        return feIsLoggedIn() ? ('menu.html?id=' + id) : 'register.html';
+      }
+
       var allRestaurants = [];
       var currentFilter = 'all';
       var currentSort = 'rating';
       var searchQ = (new URLSearchParams(window.location.search).get('search') || '').toLowerCase();
 
       function mapDbRestaurant(r) {
+        var REST_IMAGES = {
+          1: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
+          2: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&q=80',
+          3: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&q=80',
+          4: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80',
+          5: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&q=80',
+          6: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80',
+          7: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80',
+          8: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80',
+          9: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800&q=80'
+        };
+        var id = parseInt(r.restaurantid, 10);
+        var imgUrl = REST_IMAGES[id];
+        if (!imgUrl && window.RESTAURANTS) {
+          var found = Object.values(window.RESTAURANTS).find(function(x){ return x.name.toLowerCase() === (r.name || '').toLowerCase(); });
+          if (found) imgUrl = found.image;
+        }
+        if (!imgUrl) imgUrl = r.imageurl || REST_IMAGES[1];
+
+        // Distinct per-restaurant values so sorting produces different order
+        var META = {
+          1: { timeMins: 30, costNum: 200, pureVeg: false, offer: '20% OFF' },
+          2: { timeMins: 25, costNum: 350, pureVeg: false, offer: null },
+          3: { timeMins: 20, costNum: 250, pureVeg: false, offer: 'Free Delivery' },
+          4: { timeMins: 35, costNum: 300, pureVeg: false, offer: null },
+          5: { timeMins: 28, costNum: 180, pureVeg: true, offer: '15% OFF' },
+          6: { timeMins: 22, costNum: 220, pureVeg: true, offer: null },
+          7: { timeMins: 15, costNum: 150, pureVeg: true, offer: null },
+          8: { timeMins: 40, costNum: 400, pureVeg: false, offer: null },
+          9: { timeMins: 30, costNum: 280, pureVeg: false, offer: '10% OFF' }
+        };
+        var meta = META[id] || { timeMins: 30, costNum: 250, pureVeg: false, offer: null };
+        var rating = parseFloat(r.rating) || 4.0;
         return {
           id: r.restaurantid,
           name: r.name,
           cuisine: r.cuisine || r.address || '',
           tags: [],
-          rating: parseFloat(r.rating) || 4.0,
+          rating: rating,
           reviews: '',
-          time: r.openinghours || '30 mins',
-          timeMins: 30,
-          cost: '₹200 for two',
-          costLevel: 1,
-          offer: null,
-          pureVeg: false,
-          image: r.imageurl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80'
+          time: meta.timeMins + ' mins',
+          timeMins: meta.timeMins,
+          cost: '₹' + meta.costNum + ' for two',
+          costNum: meta.costNum,
+          costLevel: meta.costNum <= 220 ? 1 : (meta.costNum <= 320 ? 2 : 3),
+          offer: meta.offer,
+          pureVeg: meta.pureVeg,
+          image: imgUrl,
+          isactive: r.isactive !== false && r.isactive !== 0
         };
       }
 
@@ -143,23 +189,44 @@
           render();
         } catch (e) {
           console.error(e);
-          if (grid) grid.innerHTML = '<div class="col-12 text-center text-danger">Failed to load restaurants from database. Check console.</div>';
+          if (window.RESTAURANTS) {
+            allRestaurants = Object.values(window.RESTAURANTS);
+            render();
+          } else if (grid) {
+            grid.innerHTML = '<div class="col-12 text-center text-danger">Failed to load restaurants from database. Check console.</div>';
+          }
         }
       }
 
       function applyFilter(list) {
         return list.filter(function (r) {
           if (searchQ) {
-            var hay = (r.name + ' ' + r.cuisine).toLowerCase();
+            var hay = (r.name + ' ' + (r.cuisine || '')).toLowerCase();
             if (hay.indexOf(searchQ) === -1) return false;
           }
+          if (currentFilter === 'rating') return (r.rating || 0) >= 4.0;
+          if (currentFilter === 'fast') return (r.timeMins || 99) <= 25;
+          if (currentFilter === 'offers') return !!r.offer;
+          if (currentFilter === 'pureveg') return !!r.pureVeg;
+          if (currentFilter === 'budget') return (r.costNum || 999) <= 250;
           return true;
         });
       }
 
       function applySort(list) {
         var arr = list.slice();
-        arr.sort(function (a, b) { return b.rating - a.rating; });
+        var mode = currentSort || 'rating';
+        if (mode === 'rating' || mode === 'relevance') {
+          arr.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0); });
+        } else if (mode === 'time') {
+          arr.sort(function (a, b) { return (a.timeMins || 99) - (b.timeMins || 99); });
+        } else if (mode === 'cost-asc') {
+          arr.sort(function (a, b) { return (a.costNum || 0) - (b.costNum || 0); });
+        } else if (mode === 'cost-desc') {
+          arr.sort(function (a, b) { return (b.costNum || 0) - (a.costNum || 0); });
+        } else {
+          arr.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0); });
+        }
         return arr;
       }
 
@@ -184,9 +251,9 @@
 
         grid.innerHTML = filtered.map(function (r) {
           return '<div class="col-md-6 col-lg-4">' +
-            '<a href="menu.html?id=' + r.id + '" class="restaurant-card d-block position-relative">' +
+            '<a href="' + feRestaurantHref(r.id) + '" class="restaurant-card d-block position-relative">' + (r.offer ? '<span class="offer-badge">' + r.offer + '</span>' : '') + (!r.isactive ? '<span class="offer-badge" style="background:#6B7280">Closed</span>' : '') +
               '<img src="' + r.image + '" alt="' + r.name + '" class="restaurant-img-real" ' +
-                   'onerror="this.src=\'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80\'">' +
+                   'onerror="this.onerror=null;">' +
               '<div class="restaurant-body">' +
                 '<h5 class="restaurant-name">' + r.name + '</h5>' +
                 '<div class="restaurant-meta">' +
@@ -210,6 +277,15 @@
           render();
         });
       });
+
+      var sortEl = document.getElementById('sortSelect');
+      if (sortEl) {
+        sortEl.addEventListener('change', function () {
+          currentSort = this.value || 'rating';
+          render();
+        });
+        currentSort = sortEl.value || 'rating';
+      }
 
       loadFromDB();
     })();

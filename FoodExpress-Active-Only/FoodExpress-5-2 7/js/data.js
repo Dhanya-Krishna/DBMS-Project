@@ -17,12 +17,12 @@ const RESTAURANTS = {
     costLevel: 1,
     offer: "20% OFF",
     pureVeg: false,
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
     categories: ["All", "Starters", "Main Course", "Biryani", "Breads", "Desserts", "Beverages"],
     menu: [
       { id: "sg1", name: "Paneer Tikka", desc: "Cottage cheese marinated in spices & grilled to perfection", price: 220, category: "Starters", veg: true, image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80" },
       { id: "sg2", name: "Chicken Tikka", desc: "Boneless chicken chunks marinated in yogurt & spices", price: 260, category: "Starters", veg: false, image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80" },
-      { id: "sg3", name: "Veg Seekh Kebab", desc: "Minced vegetables skewered and grilled with spices", price: 190, category: "Starters", veg: true, image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&q=80" },
+      { id: "sg3", name: "Veg Seekh Kebab", desc: "Minced vegetables skewered and grilled with spices", price: 190, category: "Starters", veg: true, image: "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=400&q=80" },
       { id: "sg4", name: "Butter Chicken", desc: "Tender chicken in rich tomato-butter gravy", price: 320, category: "Main Course", veg: false, image: "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&q=80" },
       { id: "sg5", name: "Dal Makhani", desc: "Slow-cooked black lentils in creamy tomato gravy", price: 180, category: "Main Course", veg: true, image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80" },
       { id: "sg6", name: "Palak Paneer", desc: "Cottage cheese cubes in smooth spinach gravy", price: 210, category: "Main Course", veg: true, image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80" },
@@ -257,7 +257,7 @@ const RESTAURANTS = {
     costLevel: 2,
     offer: "10% OFF",
     pureVeg: false,
-    image: "https://images.unsplash.com/photo-1565299585323-38174c4aabed?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800&q=80",
     categories: ["All", "Tacos", "Burritos", "Nachos", "Sides", "Beverages"],
     menu: [
       { id: "tf1", name: "Chicken Soft Tacos", desc: "3 soft tacos with grilled chicken & salsa", price: 249, category: "Tacos", veg: false, image: "https://images.unsplash.com/photo-1565299585323-38174c4aabed?w=400&q=80" },
@@ -286,7 +286,13 @@ window.DELIVERY_ACCOUNTS = {
 };
 
 window.RESTAURANT_ACCOUNTS = {
-  "spice@foodexpress.com":  { restaurantId: 1, name: "Spice Garden",  password: "spice123" },
-  "pizza@foodexpress.com":  { restaurantId: 2, name: "Pizza Palace",  password: "pizza123" },
-  "burger@foodexpress.com": { restaurantId: 3, name: "Burger Hub",    password: "burger123" }
+  "spice@foodexpress.com":   { restaurantId: 1, name: "Spice Garden",   password: "spice123" },
+  "pizza@foodexpress.com":   { restaurantId: 2, name: "Pizza Palace",   password: "pizza123" },
+  "burger@foodexpress.com":  { restaurantId: 3, name: "Burger Hub",     password: "burger123" },
+  "dragon@foodexpress.com":  { restaurantId: 4, name: "Dragon Wok",     password: "dragon123" },
+  "sweet@foodexpress.com":   { restaurantId: 5, name: "Sweet Treats",   password: "sweet123" },
+  "green@foodexpress.com":   { restaurantId: 6, name: "Green Bowl",     password: "green123" },
+  "chai@foodexpress.com":    { restaurantId: 7, name: "Chai & More",    password: "chai123" },
+  "coastal@foodexpress.com": { restaurantId: 8, name: "Coastal Catch",  password: "coastal123" },
+  "taco@foodexpress.com":    { restaurantId: 9, name: "Taco Fiesta",    password: "taco123" }
 };

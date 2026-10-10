@@ -40,7 +40,7 @@
               <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>
               <li><a class="dropdown-item" href="order_tracking.html"><i class="bi bi-bag me-2"></i>My Orders</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="index.html"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+              <li><a class="dropdown-item" href="index.html" onclick="localStorage.removeItem('foodexpress_user');localStorage.removeItem('foodexpress_restaurant');localStorage.removeItem('foodexpress_delivery');"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -55,6 +55,7 @@
     <div class="container page-banner-content">
       <h1 class="page-banner-title">Hello, <span class="user-name">User</span>! <span class="wave">👋</span></h1>
       <p class="page-banner-sub">What would you like to eat today?</p>
+
       <div class="search-box page-banner-search">
         <i class="bi bi-search ms-3"></i>
         <input type="text" id="searchInput" placeholder="Search for restaurants or dishes...">
@@ -117,9 +118,9 @@
       </div>
       <div class="row g-4">
         <div class="col-md-6 col-lg-4">
-          <a href="menu.html?id=1" class="restaurant-card d-block position-relative">
+          <a href="menu.html?id=1" class="restaurant-card d-block position-relative" onclick="location.href='menu.html?id=1';return false;">
             <span class="offer-badge">20% OFF</span>
-            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80" alt="Spice Garden" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80" alt="Spice Garden" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
               <h5 class="restaurant-name">Spice Garden</h5>
               <div class="restaurant-meta">
@@ -135,7 +136,7 @@
           </a>
         </div>
         <div class="col-md-6 col-lg-4">
-          <a href="menu.html?id=2" class="restaurant-card d-block">
+          <a href="menu.html?id=2" class="restaurant-card d-block" onclick="location.href='menu.html?id=2';return false;">
             <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80" alt="Pizza Palace" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
               <h5 class="restaurant-name">Pizza Palace</h5>
@@ -152,7 +153,7 @@
           </a>
         </div>
         <div class="col-md-6 col-lg-4">
-          <a href="menu.html?id=3" class="restaurant-card d-block position-relative">
+          <a href="menu.html?id=3" class="restaurant-card d-block position-relative" onclick="location.href='menu.html?id=3';return false;">
             <span class="offer-badge">Free Delivery</span>
             <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80" alt="Burger Hub" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
@@ -170,7 +171,7 @@
           </a>
         </div>
         <div class="col-md-6 col-lg-4">
-          <a href="menu.html?id=4" class="restaurant-card d-block">
+          <a href="menu.html?id=4" class="restaurant-card d-block" onclick="location.href='menu.html?id=4';return false;">
             <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&q=80" alt="Dragon Wok" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
               <h5 class="restaurant-name">Dragon Wok</h5>
@@ -187,7 +188,7 @@
           </a>
         </div>
         <div class="col-md-6 col-lg-4">
-          <a href="menu.html?id=5" class="restaurant-card d-block position-relative">
+          <a href="menu.html?id=5" class="restaurant-card d-block position-relative" onclick="location.href='menu.html?id=5';return false;">
             <span class="offer-badge">15% OFF</span>
             <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80" alt="Sweet Treats" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
@@ -205,7 +206,7 @@
           </a>
         </div>
         <div class="col-md-6 col-lg-4">
-          <a href="menu.html?id=6" class="restaurant-card d-block">
+          <a href="menu.html?id=6" class="restaurant-card d-block" onclick="location.href='menu.html?id=6';return false;">
             <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80" alt="Green Bowl" class="restaurant-img" style="height:180px;object-fit:cover;width:100%;">
             <div class="restaurant-body">
               <h5 class="restaurant-name">Green Bowl</h5>
@@ -259,5 +260,55 @@
   <script src="js/supabaseClient.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/script.js"></script>
+
+  <script>
+    (function () {
+      try {
+        const u = JSON.parse(localStorage.getItem('foodexpress_user') || 'null');
+        if (!u || !u.email) {
+          window.location.href = 'index.html';
+        }
+      } catch (e) {
+        window.location.href = 'index.html';
+      }
+    })();
+  </script>
+
+
+  <script>
+    // Logged-in home: restaurant cards open the restaurant MENU only
+    document.querySelectorAll('a.restaurant-card').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var href = a.getAttribute('href') || '';
+        if (href.indexOf('menu.html') === 0) {
+          e.preventDefault();
+          window.location.href = href;
+          return;
+        }
+        // If anything still points to register, send to restaurants list instead
+        e.preventDefault();
+        window.location.href = 'restaurants.html';
+      });
+    });
+  </script>
+
+
+
+  <script>
+    (function () {
+      var input = document.getElementById('searchInput');
+      var btn = document.getElementById('searchBtn');
+      function go() {
+        var q = (input && input.value || '').trim();
+        if (!q) { if (input) input.focus(); return; }
+        window.location.href = 'restaurants.html?search=' + encodeURIComponent(q);
+      }
+      if (btn) btn.addEventListener('click', function (e) { e.preventDefault(); go(); });
+      if (input) input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); go(); }
+      });
+    })();
+  </script>
+
 </body>
 </html>

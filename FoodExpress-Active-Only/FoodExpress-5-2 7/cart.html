@@ -36,7 +36,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-              <li><a class="dropdown-item" href="index.html">Logout</a></li>
+              <li><a class="dropdown-item" href="index.html" onclick="localStorage.removeItem('foodexpress_user');localStorage.removeItem('foodexpress_restaurant');localStorage.removeItem('foodexpress_delivery');">Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -115,36 +115,49 @@
       items.forEach(item => {
         html += `
           <div class="cart-item">
-            <img src="${item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80'}" alt="${item.name}" class="cart-item-img" style="width:80px;height:80px;object-fit:cover;border-radius:8px;" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80'">
+            <img src="${item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80'}" alt="${item.name}" class="cart-item-img" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80'">
             <div class="flex-grow-1">
-              <h6 class="mb-1 fw-semibold">${item.name}</h6>
-              <p class="small text-muted mb-1">${item.restaurant || 'Restaurant'}</p>
-              <div class="d-flex align-items-center justify-content-between">
-                <span class="fw-bold text-primary">₹${item.price}</span>
-                <div class="qty-control">
-                  <button class="qty-btn" data-id="${item.id}" data-action="dec">−</button>
-                  <span class="fw-semibold">${item.qty}</span>
-                  <button class="qty-btn" data-id="${item.id}" data-action="inc">+</button>
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <div>
+                  <h6 class="mb-1 fw-semibold">${item.name}</h6>
+                  <p class="small text-muted mb-0">${item.restaurant || ''}</p>
+                  <p class="mb-0 mt-1 fw-semibold">₹${item.price}</p>
                 </div>
+                <button class="btn btn-sm text-danger remove-item" data-id="${item.id}" title="Remove"><i class="bi bi-trash"></i></button>
+              </div>
+              <div class="qty-controls">
+                <button type="button" class="qty-btn" data-id="${item.id}" data-delta="-1">−</button>
+                <span class="fw-semibold">${item.qty}</span>
+                <button type="button" class="qty-btn" data-id="${item.id}" data-delta="1">+</button>
               </div>
             </div>
-            <button class="btn btn-sm text-danger" onclick="Cart.removeItem('${item.id}'); renderCart();">
-              <i class="bi bi-trash"></i>
-            </button>
+            <div class="text-end fw-bold" style="min-width:72px;">₹${item.price * item.qty}</div>
           </div>`;
       });
       container.innerHTML = html;
 
-      // Re-bind qty buttons
+      // Qty + / − (uses data-delta)
       container.querySelectorAll('.qty-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
           const id = this.dataset.id;
-          const action = this.dataset.action;
+          const delta = parseInt(this.dataset.delta, 10) || 0;
           const items = Cart.getItems();
-          const item = items.find(i => i.id === id);
+          const item = items.find(i => String(i.id) === String(id));
           if (!item) return;
-          if (action === 'inc') Cart.updateQty(id, item.qty + 1);
-          else Cart.updateQty(id, item.qty - 1);
+          Cart.updateQty(id, item.qty + delta);
+          renderCart();
+        });
+      });
+
+      // Delete / remove item
+      container.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = this.dataset.id;
+          Cart.removeItem(id);
           renderCart();
         });
       });
