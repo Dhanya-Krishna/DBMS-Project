@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Dashboard - FoodExpress</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash-body">
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <div class="dash-brand">
+        <span class="logo-icon"><i class="bi bi-basket2-fill"></i></span>
+        <div>
+          <strong>FoodExpress</strong>
+          <small>Delivery Partner</small>
+        </div>
+      </div>
+      <nav class="dash-nav">
+        <a href="#dashboard" class="dash-nav-link active" data-section="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="#deliveries" class="dash-nav-link" data-section="deliveries"><i class="bi bi-bicycle"></i> Deliveries</a>
+        <a href="#history" class="dash-nav-link" data-section="history"><i class="bi bi-clock-history"></i> History</a>
+        <a href="#earnings" class="dash-nav-link" data-section="earnings"><i class="bi bi-wallet2"></i> Earnings</a>
+        <a href="delivery_login.html" class="dash-nav-link"><i class="bi bi-box-arrow-left"></i> Logout</a>
+      </nav>
+    </aside>
+
+    <main class="dash-main">
+      <header class="dash-topbar">
+        <div>
+          <h1 class="dash-heading" id="pageTitle">Delivery Dashboard</h1>
+          <p class="dash-welcome" id="partnerHello">Ready for deliveries</p>
+        </div>
+        <div class="dash-top-actions">
+          <span class="status-pill online" id="onlineLabel"><span class="dot"></span> Online</span>
+          <div class="form-check form-switch m-0">
+            <input class="form-check-input" type="checkbox" id="onlineToggle" checked>
+          </div>
+        </div>
+      </header>
+
+      <section id="section-dashboard">
+        <div class="dash-stats">
+          <div class="stat-tile">
+            <div class="stat-tile-icon bag"><i class="bi bi-bicycle"></i></div>
+            <div>
+              <div class="stat-tile-value" id="statDeliveries">0</div>
+              <div class="stat-tile-label">My Active Jobs</div>
+              <div class="stat-tile-meta">assigned to you</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon rupee"><i class="bi bi-currency-rupee"></i></div>
+            <div>
+              <div class="stat-tile-value" id="statEarnings">₹0</div>
+              <div class="stat-tile-label">Total Earnings</div>
+              <div class="stat-tile-meta">completed deliveries</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon star"><i class="bi bi-star"></i></div>
+            <div>
+              <div class="stat-tile-value">4.8</div>
+              <div class="stat-tile-label">Your Rating</div>
+              <div class="stat-tile-meta">partner score</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon clock"><i class="bi bi-lightning"></i></div>
+            <div>
+              <div class="stat-tile-value" id="statAvailable">0</div>
+              <div class="stat-tile-label">Available Nearby</div>
+              <div class="stat-tile-meta">ready to accept</div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel-head">
+            <div class="d-flex align-items-center gap-2">
+              <h2 class="dash-panel-title">Needs attention</h2>
+              <span class="badge-soft" id="dashBadge">0</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr><th>Order ID</th><th>Restaurant</th><th>Customer</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="dashBody"><tr><td colspan="5" class="text-center py-4 text-muted">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-deliveries" class="d-none">
+        <div class="dash-panel">
+          <div class="dash-panel-head">
+            <div class="d-flex align-items-center gap-2">
+              <h2 class="dash-panel-title">Live Deliveries</h2>
+              <span class="badge-soft" id="availBadge">0 Available</span>
+            </div>
+            <div class="dash-search">
+              <i class="bi bi-search"></i>
+              <input type="text" id="delSearch" placeholder="Search orders...">
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr><th>Order ID</th><th>Restaurant</th><th>Customer</th><th>Address</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="deliveryBody"><tr><td colspan="6" class="text-center py-4 text-muted">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-history" class="d-none">
+        <div class="dash-panel">
+          <div class="dash-panel-head">
+            <div class="d-flex align-items-center gap-2">
+              <h2 class="dash-panel-title">Delivery History</h2>
+              <span class="badge-soft" id="histBadge">0 completed</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr><th>Order ID</th><th>Restaurant</th><th>Customer</th><th>Address</th><th>Amount</th><th>Status</th><th>When</th></tr>
+              </thead>
+              <tbody id="historyBody"><tr><td colspan="7" class="text-center py-4 text-muted">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-earnings" class="d-none">
+        <div class="dash-stats" style="margin-bottom:1.5rem;">
+          <div class="stat-tile">
+            <div class="stat-tile-icon rupee"><i class="bi bi-wallet2"></i></div>
+            <div>
+              <div class="stat-tile-value" id="earnTotal">₹0</div>
+              <div class="stat-tile-label">Lifetime Earnings</div>
+              <div class="stat-tile-meta">10% of order value</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon bag"><i class="bi bi-check2-circle"></i></div>
+            <div>
+              <div class="stat-tile-value" id="earnCount">0</div>
+              <div class="stat-tile-label">Completed Jobs</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon star"><i class="bi bi-graph-up"></i></div>
+            <div>
+              <div class="stat-tile-value" id="earnAvg">₹0</div>
+              <div class="stat-tile-label">Avg per delivery</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon clock"><i class="bi bi-calendar3"></i></div>
+            <div>
+              <div class="stat-tile-value" id="earnToday">₹0</div>
+              <div class="stat-tile-label">Today</div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel-head"><h2 class="dash-panel-title">Earnings breakdown</h2></div>
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr><th>Order ID</th><th>Restaurant</th><th>Order value</th><th>Your cut (10%)</th><th>Date</th></tr>
+              </thead>
+              <tbody id="earnBody"><tr><td colspan="5" class="text-center py-4 text-muted">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/db.js"></script>
+  
+  <script>
+  (async function () {
+    let partner = null;
+    try { partner = JSON.parse(localStorage.getItem('foodexpress_delivery') || 'null'); } catch (e) {}
+    if (!partner || !partner.id) {
+      window.location.href = 'delivery_login.html';
+      return;
+    }
+
+    const hello = document.getElementById('partnerHello');
+    if (hello) hello.textContent = 'Hello, ' + (partner.name || 'Partner') + ' — ready for deliveries';
+
+    const titles = {
+      dashboard: 'Delivery Dashboard',
+      deliveries: 'Live Deliveries',
+      history: 'Delivery History',
+      earnings: 'Earnings'
+    };
+
+    document.querySelectorAll('.dash-nav-link[data-section]').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelectorAll('.dash-nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        const sec = this.dataset.section;
+        document.querySelectorAll('[id^="section-"]').forEach(el => {
+          el.classList.toggle('d-none', el.id !== 'section-' + sec);
+        });
+        const pt = document.getElementById('pageTitle');
+        if (pt) pt.textContent = titles[sec] || 'Dashboard';
+      });
+    });
+
+    // Online / Offline — when offline, freeze job list (no new available jobs)
+    let partnerOnline = localStorage.getItem('fe_delivery_online_' + partner.id) !== '0';
+    const onlineToggle = document.getElementById('onlineToggle');
+    const onlineLabel = document.getElementById('onlineLabel');
+    function applyOnlineUI() {
+      if (onlineToggle) onlineToggle.checked = partnerOnline;
+      if (onlineLabel) {
+        if (partnerOnline) {
+          onlineLabel.className = 'status-pill online';
+          onlineLabel.innerHTML = '<span class="dot"></span> Online';
+        } else {
+          onlineLabel.className = 'status-pill offline';
+          onlineLabel.innerHTML = '<span class="dot"></span> Offline';
+        }
+      }
+      const freeze = document.getElementById('offlineFreezeBanner');
+      if (!partnerOnline) {
+        if (!freeze) {
+          const b = document.createElement('div');
+          b.id = 'offlineFreezeBanner';
+          b.className = 'alert alert-secondary text-center mx-3 mt-2';
+          b.innerHTML = '<strong>You are offline.</strong> New delivery jobs are hidden. Go online to receive orders.';
+          const main = document.querySelector('.dash-main, main, #section-dashboard');
+          if (main) main.insertBefore(b, main.firstChild);
+        }
+      } else if (freeze) {
+        freeze.remove();
+      }
+    }
+    applyOnlineUI();
+    onlineToggle?.addEventListener('change', function () {
+      partnerOnline = !!this.checked;
+      localStorage.setItem('fe_delivery_online_' + partner.id, partnerOnline ? '1' : '0');
+      applyOnlineUI();
+      refreshAll();
+    });
+
+    function setText(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    }
+
+    function formatWhen(iso) {
+      if (!iso) return '—';
+      try { return new Date(iso).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }); }
+      catch (e) { return '—'; }
+    }
+
+    async function waitClient() {
+      for (let i = 0; i < 40 && !window.supabaseClient; i++) {
+        await new Promise(r => setTimeout(r, 100));
+      }
+    }
+
+    function jobAcceptBtn(job) {
+      const oids = (job.orderids || []).join(',');
+      return '<button type="button" class="btn-dash-sm solid btn-accept" data-cid="' + job.combinedorderid +
+        '" data-oids="' + oids + '"><i class="bi bi-check-lg me-1"></i> Accept Job</button>';
+    }
+    function jobDeliverBtn(job) {
+      const oids = (job.orderids || []).join(',');
+      return '<button type="button" class="btn-dash-sm solid btn-upd" data-cid="' + job.combinedorderid +
+        '" data-oids="' + oids + '"><i class="bi bi-box-seam me-1"></i> Mark Delivered</button>';
+    }
+
+    function bindActions(root) {
+      if (!root) return;
+      root.querySelectorAll('.btn-accept').forEach(btn => {
+        btn.onclick = async function () {
+          this.disabled = true;
+          const prev = this.innerHTML;
+          this.textContent = 'Accepting...';
+          try {
+            const oids = (this.dataset.oids || '').split(',').filter(Boolean);
+            await DB.acceptCombinedDelivery(this.dataset.cid, partner.id, oids);
+            await refreshAll();
+          } catch (e) {
+            console.error(e);
+            alert('Failed to accept: ' + (e.message || e));
+            this.disabled = false;
+            this.innerHTML = prev;
+          }
+        };
+      });
+      root.querySelectorAll('.btn-upd').forEach(btn => {
+        btn.onclick = async function () {
+          this.disabled = true;
+          const prev = this.innerHTML;
+          this.textContent = 'Updating...';
+          try {
+            const oids = (this.dataset.oids || '').split(',').filter(Boolean);
+            await DB.markCombinedDelivered(this.dataset.cid, oids);
+            await refreshAll();
+          } catch (e) {
+            console.error(e);
+            alert('Failed: ' + (e.message || e));
+            this.disabled = false;
+            this.innerHTML = prev;
+          }
+        };
+      });
+    }
+
+    function jobRow(job) {
+      const cust = job.customer ? job.customer.name : '—';
+      const addr = job.address
+        ? ((job.address.street || '') + ', ' + (job.address.city || ''))
+        : '—';
+      const idLabel = job.ismerged
+        ? ('C#' + job.combinedorderid + ' <small class="text-muted">(' + (job.orderids || []).join(', ') + ')</small>')
+        : ('#' + ((job.orderids && job.orderids[0]) || job.combinedorderid));
+      return '<tr>' +
+        '<td class="fw-medium">' + idLabel + '</td>' +
+        '<td>' + (job.restaurants || '—') + '</td>' +
+        '<td>' + cust + '</td>' +
+        '<td class="small text-muted">' + addr + '</td>' +
+        '<td><span class="st-pill st-ready">Ready</span></td>' +
+        '<td><div class="action-cell">' + jobAcceptBtn(job) + '</div></td>' +
+        '</tr>';
+    }
+
+    function mineRow(job) {
+      const cust = job.customer ? job.customer.name : '—';
+      const addr = job.address
+        ? ((job.address.street || '') + ', ' + (job.address.city || ''))
+        : '—';
+      const idLabel = job.ismerged
+        ? ('C#' + job.combinedorderid + ' <small>(' + (job.orderids || []).join(', ') + ')</small>')
+        : ('#' + ((job.orderids && job.orderids[0]) || job.combinedorderid));
+      return '<tr>' +
+        '<td class="fw-medium">' + idLabel + '</td>' +
+        '<td>' + (job.restaurants || '—') + '</td>' +
+        '<td>' + cust + '</td>' +
+        '<td class="small text-muted">' + addr + '</td>' +
+        '<td><span class="st-pill st-out">Out for Delivery</span></td>' +
+        '<td><div class="action-cell">' + jobDeliverBtn(job) + '</div></td>' +
+        '</tr>';
+    }
+
+    function histRow(o) {
+      const rest = o.restaurant ? o.restaurant.name : '—';
+      const cust = o.customer ? o.customer.name : '—';
+      const addr = o.address ? ((o.address.street || '') + ', ' + (o.address.city || '')) : '—';
+      return '<tr>' +
+        '<td class="fw-medium">#' + o.orderid + '</td>' +
+        '<td>' + rest + '</td>' +
+        '<td>' + cust + '</td>' +
+        '<td class="small text-muted">' + addr + '</td>' +
+        '<td>₹' + (o.subtotal || 0) + '</td>' +
+        '<td><span class="st-pill st-delivered">' + (o.status || 'Delivered') + '</span></td>' +
+        '<td class="small">' + formatWhen(o.orderdatetime) + '</td>' +
+        '</tr>';
+    }
+
+    function earnRow(o) {
+      const rest = o.restaurant ? o.restaurant.name : '—';
+      const cut = Math.round((parseFloat(o.subtotal) || 0) * 0.1);
+      return '<tr>' +
+        '<td class="fw-medium">#' + o.orderid + '</td>' +
+        '<td>' + rest + '</td>' +
+        '<td>₹' + (o.subtotal || 0) + '</td>' +
+        '<td class="fw-semibold">₹' + cut + '</td>' +
+        '<td class="small">' + formatWhen(o.orderdatetime) + '</td>' +
+        '</tr>';
+    }
+
+    function groupMine(list) {
+      const g = {};
+      (list || []).forEach(o => {
+        const k = String(o.combinedorderid || o.orderid);
+        if (!g[k]) g[k] = [];
+        g[k].push(o);
+      });
+      return Object.values(g).map(orders => ({
+        combinedorderid: orders[0].combinedorderid || orders[0].orderid,
+        ismerged: orders.length > 1,
+        orders: orders,
+        orderids: orders.map(x => x.orderid),
+        customer: orders[0].customer,
+        address: orders[0].address,
+        restaurants: orders.map(x => x.restaurant ? x.restaurant.name : 'Restaurant').join(' + '),
+        subtotal: orders.reduce((s, x) => s + (parseFloat(x.subtotal) || 0), 0),
+        status: orders[0].status
+      }));
+    }
+
+    async function refreshAll() {
+      await waitClient();
+
+      let available = [];
+      let mine = [];
+
+      try {
+        if (partnerOnline && window.DB && typeof DB.getAvailableOrdersForDelivery === 'function') {
+          available = await DB.getAvailableOrdersForDelivery() || [];
+        } else if (!partnerOnline) {
+          available = []; // Offline: no new jobs
+        }
+      } catch (e) {
+        console.error('available jobs error', e);
+        available = [];
+      }
+
+      try {
+        if (window.DB && typeof DB.getOrdersForPartner === 'function') {
+          mine = await DB.getOrdersForPartner(partner.id) || [];
+        }
+      } catch (e) {
+        console.error('partner orders error', e);
+        mine = [];
+      }
+
+      try {
+        const myActive = mine.filter(o => {
+          const s = (o.status || '').toLowerCase();
+          return !(s.includes('deliver') && !s.includes('out'));
+        });
+        const history = mine.filter(o => {
+          const s = (o.status || '').toLowerCase();
+          return s.includes('deliver') && !s.includes('out');
+        });
+
+        const myJobs = groupMine(myActive);
+        const myOrderIdSet = new Set();
+        myJobs.forEach(j => (j.orderids || []).forEach(id => myOrderIdSet.add(String(id))));
+        const availFiltered = (available || []).filter(j =>
+          !(j.orderids || []).some(id => myOrderIdSet.has(String(id)))
+        );
+
+        setText('statDeliveries', String(myActive.length));
+        setText('statAvailable', String(availFiltered.length));
+        setText('availBadge', availFiltered.length + ' Available');
+        setText('dashBadge', String(availFiltered.length + myActive.length));
+
+        const totalEarn = history.reduce((s, o) => s + Math.round((parseFloat(o.subtotal) || 0) * 0.1), 0);
+        setText('statEarnings', '₹' + totalEarn);
+        setText('earnTotal', '₹' + totalEarn);
+        setText('earnCount', String(history.length));
+        setText('earnAvg', history.length ? ('₹' + Math.round(totalEarn / history.length)) : '₹0');
+        setText('histBadge', history.length + ' completed');
+
+        const today = new Date().toDateString();
+        const todayEarn = history
+          .filter(o => o.orderdatetime && new Date(o.orderdatetime).toDateString() === today)
+          .reduce((s, o) => s + Math.round((parseFloat(o.subtotal) || 0) * 0.1), 0);
+        setText('earnToday', '₹' + todayEarn);
+
+        const dashBody = document.getElementById('dashBody');
+        const delBody = document.getElementById('deliveryBody');
+        const histBody = document.getElementById('historyBody');
+        const earnBody = document.getElementById('earnBody');
+
+        const emptyAvail = '<tr><td colspan="6" class="text-center py-5 text-muted">No deliveries available. Multi-restaurant jobs appear when <strong>all</strong> restaurants mark Ready.</td></tr>';
+        const emptyMine = '<tr><td colspan="6" class="text-center py-5 text-muted">No active jobs assigned to you.</td></tr>';
+
+        const availRows = availFiltered.map(jobRow);
+        const mineRows = myJobs.map(mineRow);
+        const combined = availRows.concat(mineRows);
+
+        if (dashBody) {
+          dashBody.innerHTML = combined.length ? combined.join('') : emptyAvail;
+          bindActions(dashBody);
+        }
+        if (delBody) {
+          delBody.innerHTML = combined.length ? combined.join('') : emptyAvail;
+          bindActions(delBody);
+        }
+        if (histBody) {
+          histBody.innerHTML = history.length
+            ? history.map(histRow).join('')
+            : '<tr><td colspan="7" class="text-center py-5 text-muted">No completed deliveries yet.</td></tr>';
+        }
+        if (earnBody) {
+          earnBody.innerHTML = history.length
+            ? history.map(earnRow).join('')
+            : '<tr><td colspan="5" class="text-center py-5 text-muted">Earnings appear after you complete deliveries.</td></tr>';
+        }
+      } catch (e) {
+        console.error('refreshAll render error', e);
+        ['dashBody', 'deliveryBody', 'historyBody', 'earnBody'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = '<tr><td colspan="7" class="text-center text-danger py-4">' + (e.message || e) + '</td></tr>';
+        });
+      }
+    }
+
+    document.getElementById('delSearch')?.addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('#deliveryBody tr').forEach(tr => {
+        tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+
+    window.addEventListener('ordersUpdated', function () { refreshAll(); });
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'foodexpress_orders_updated') refreshAll();
+    });
+
+    try {
+      await refreshAll();
+    } catch (e) {
+      console.error('initial refresh failed', e);
+      const dashBody = document.getElementById('dashBody');
+      if (dashBody) {
+        dashBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Could not load deliveries: ' + (e.message || e) + '</td></tr>';
+      }
+    }
+    setInterval(function () { refreshAll(); }, 8000);
+  })();
+  </script>
+
+</body>
+</html>

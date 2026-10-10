@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - FoodExpress</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="home.html">
+        <span class="logo-icon"><i class="bi bi-basket2-fill"></i></span>
+        FoodExpress
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="restaurants.html">Restaurants</a></li>
+          <li class="nav-item">
+            <a class="nav-link cart-badge active" href="cart.html">
+              <i class="bi bi-cart3"></i> Cart
+              <span class="badge rounded-pill cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span class="user-name">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+              <li><a class="dropdown-item" href="index.html" onclick="localStorage.removeItem('foodexpress_user');localStorage.removeItem('foodexpress_restaurant');localStorage.removeItem('foodexpress_delivery');">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header page-header-cart">
+    <div class="container">
+      <h1><i class="bi bi-cart3"></i> Your Cart</h1>
+    </div>
+  </div>
+
+  <div class="container pb-5">
+    <div class="row">
+      <div class="col-lg-8" id="cartItems">
+        <!-- Cart items rendered by JS -->
+      </div>
+      <div class="col-lg-4">
+        <div class="cart-summary" id="cartSummary">
+          <h5 class="fw-bold mb-3">Order Summary</h5>
+          <div class="summary-row">
+            <span>Item Total</span>
+            <span id="subtotal">₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Delivery Fee</span>
+            <span id="deliveryFee">₹40</span>
+          </div>
+          <div class="summary-row">
+            <span>Taxes & Charges</span>
+            <span id="taxes">₹0</span>
+          </div>
+          <div class="summary-row summary-total">
+            <span>Grand Total</span>
+            <span id="grandTotal">₹0</span>
+          </div>
+          <a href="checkout.html" class="btn btn-primary-custom w-100 mt-3 py-2" id="checkoutBtn">Proceed to Checkout</a>
+          <a href="restaurants.html" class="btn btn-outline-custom w-100 mt-2">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">&copy; 2026 FoodExpress. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    function renderCart() {
+      const container = document.getElementById('cartItems');
+      const items = Cart.getItems();
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state bg-white rounded-3 shadow-sm">
+            <i class="bi bi-cart-x"></i>
+            <h5>Your cart is empty</h5>
+            <p class="text-muted">Looks like you haven't added anything yet.</p>
+            <a href="restaurants.html" class="btn btn-primary-custom">Browse Restaurants</a>
+          </div>`;
+        document.getElementById('subtotal').textContent = '₹0';
+        document.getElementById('taxes').textContent = '₹0';
+        document.getElementById('grandTotal').textContent = '₹0';
+        document.getElementById('checkoutBtn').classList.add('disabled');
+        return;
+      }
+      document.getElementById('checkoutBtn').classList.remove('disabled');
+      let html = '';
+      items.forEach(item => {
+        html += `
+          <div class="cart-item">
+            <img src="${item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80'}" alt="${item.name}" class="cart-item-img" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80'">
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <div>
+                  <h6 class="mb-1 fw-semibold">${item.name}</h6>
+                  <p class="small text-muted mb-0">${item.restaurant || ''}</p>
+                  <p class="mb-0 mt-1 fw-semibold">₹${item.price}</p>
+                </div>
+                <button class="btn btn-sm text-danger remove-item" data-id="${item.id}" title="Remove"><i class="bi bi-trash"></i></button>
+              </div>
+              <div class="qty-controls">
+                <button type="button" class="qty-btn" data-id="${item.id}" data-delta="-1">−</button>
+                <span class="fw-semibold">${item.qty}</span>
+                <button type="button" class="qty-btn" data-id="${item.id}" data-delta="1">+</button>
+              </div>
+            </div>
+            <div class="text-end fw-bold" style="min-width:72px;">₹${item.price * item.qty}</div>
+          </div>`;
+      });
+      container.innerHTML = html;
+
+      // Qty + / − (uses data-delta)
+      container.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = this.dataset.id;
+          const delta = parseInt(this.dataset.delta, 10) || 0;
+          const items = Cart.getItems();
+          const item = items.find(i => String(i.id) === String(id));
+          if (!item) return;
+          Cart.updateQty(id, item.qty + delta);
+          renderCart();
+        });
+      });
+
+      // Delete / remove item
+      container.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = this.dataset.id;
+          Cart.removeItem(id);
+          renderCart();
+        });
+      });
+
+      const subtotal = Cart.getTotal();
+      const delivery = subtotal > 0 ? 40 : 0;
+      const taxes = Math.round(subtotal * 0.05);
+      const total = subtotal + delivery + taxes;
+      document.getElementById('subtotal').textContent = '₹' + subtotal;
+      document.getElementById('deliveryFee').textContent = '₹' + delivery;
+      document.getElementById('taxes').textContent = '₹' + taxes;
+      document.getElementById('grandTotal').textContent = '₹' + total;
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCart);
+    window.addEventListener('cartUpdated', renderCart);
+  </script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - FoodExpress</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="home.html">
+        <span class="logo-icon"><i class="bi bi-basket2-fill"></i></span>
+        FoodExpress
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="restaurants.html">Restaurants</a></li>
+          <li class="nav-item"><a class="nav-link" href="order_tracking.html">Orders</a></li>
+          <li class="nav-item">
+            <a class="nav-link cart-badge" href="cart.html">
+              <i class="bi bi-cart3"></i> Cart
+              <span class="badge rounded-pill cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span class="user-name">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+              <li><a class="dropdown-item" href="index.html" onclick="localStorage.removeItem('foodexpress_user');localStorage.removeItem('foodexpress_restaurant');localStorage.removeItem('foodexpress_delivery');">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header page-header-profile">
+    <div class="container">
+      <h1><i class="bi bi-person"></i> My Profile</h1>
+    </div>
+  </div>
+
+  <div class="container pb-5">
+    <div class="row">
+      <div class="col-lg-4 mb-4">
+        <div class="profile-card text-center">
+          <div class="profile-avatar user-name" style="text-transform:uppercase;">U</div>
+          <h4 class="fw-bold user-name">User</h4>
+          <p class="text-muted mb-3" id="userEmail">user@example.com</p>
+          <span class="badge bg-success">Verified</span>
+          <hr>
+          <div class="d-flex justify-content-around text-center">
+            <div>
+              <h5 class="fw-bold mb-0">24</h5>
+              <small class="text-muted">Orders</small>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-0">₹8,450</h5>
+              <small class="text-muted">Spent</small>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-0">5</h5>
+              <small class="text-muted">Favourites</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="profile-card mb-4">
+          <h5 class="fw-bold mb-3">Personal Information</h5>
+          <form id="profileForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control form-control-custom" id="profileName" placeholder="Your name">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control form-control-custom" id="profileEmail" placeholder="your@email.com">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-control form-control-custom" id="profilePhone" placeholder="+91 98765 43210">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" class="form-control form-control-custom" id="profileDob">
+              </div>
+              <div class="col-12">
+                <button type="button" class="btn btn-primary-custom" id="saveProfileBtn">Save Changes</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="profile-card mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Saved Addresses</h5>
+            <button class="btn btn-outline-custom btn-sm" data-bs-toggle="collapse" data-bs-target="#newAddressCollapse">
+              <i class="bi bi-plus-lg me-1"></i> Add New Address
+            </button>
+          </div>
+
+          <div class="collapse mb-3" id="newAddressCollapse">
+            <div class="card card-body bg-light border-0">
+              <h6 class="fw-bold mb-2">New Address Details</h6>
+              <div class="row g-2">
+                <div class="col-12">
+                  <input type="text" id="newAddrStreet" class="form-control form-control-custom" placeholder="Street Address / Flat / Building">
+                </div>
+                <div class="col-md-6">
+                  <input type="text" id="newAddrCity" class="form-control form-control-custom" placeholder="City (e.g. Kochi)">
+                </div>
+                <div class="col-md-6">
+                  <input type="text" id="newAddrPin" class="form-control form-control-custom" placeholder="Pincode (e.g. 682001)">
+                </div>
+                <div class="col-12 mt-2">
+                  <button type="button" class="btn btn-primary-custom btn-sm" id="saveNewAddrBtn">Save Address</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="savedAddressesList">
+            <div class="text-muted small py-2">Loading addresses...</div>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <h5 class="fw-bold mb-3">Recent Orders</h5>
+          <div class="table-responsive">
+            <table class="table order-table mb-0">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Restaurant</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="profileOrdersBody">
+                <tr><td colspan="5" class="text-center py-4 text-muted">Loading your orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">&copy; 2026 FoodExpress. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/db.js"></script>
+  <script>
+    async function waitClient() {
+      for (let i = 0; i < 30 && !window.supabaseClient; i++) {
+        await new Promise(r => setTimeout(r, 100));
+      }
+    }
+
+    function statusBadgeHtml(status) {
+      const s = (status || '').toLowerCase();
+      if (s.includes('deliver') && !s.includes('out')) return '<span class="status-badge status-delivered">Delivered</span>';
+      if (s.includes('out')) return '<span class="status-badge bg-warning text-dark">Out for Delivery</span>';
+      if (s.includes('ready')) return '<span class="status-badge bg-info text-dark">Ready</span>';
+      if (s.includes('prepar')) return '<span class="status-badge status-preparing">Preparing</span>';
+      return '<span class="status-badge status-preparing">Placed</span>';
+    }
+
+    window.reorderOrder = async function(orderId) {
+      try {
+        if (!window.Cart) {
+          alert('Cart is not loaded. Refresh the page and try again.');
+          return;
+        }
+        await waitClient();
+        if (!window.DB) {
+          alert('Database client not ready. Refresh and try again.');
+          return;
+        }
+
+        let order = await DB.getOrderDetails(orderId);
+        // getOrderDetails may return an array for multi-id lookups
+        if (Array.isArray(order)) order = order[0] || null;
+
+        let lines = [];
+        if (order) {
+          lines = order.orderitem || order.orderitems || [];
+        }
+
+        // Always try a direct orderitem query (most reliable)
+        try {
+          const direct = await DB.getOrderItems(orderId);
+          if (direct && direct.length) lines = direct;
+        } catch (e) {
+          console.warn('direct orderitem fetch', e);
+        }
+
+        if (!lines.length) {
+          alert('No items found for this order. The order may not have line items in the database.');
+          return;
+        }
+
+        const restName = (order && order.restaurant) ? order.restaurant.name : 'Restaurant';
+        const restId = order
+          ? (order.restaurantid || (order.restaurant && order.restaurant.restaurantid) || null)
+          : null;
+
+        let added = 0;
+        for (const it of lines) {
+          const id = it.itemid
+            || (it.menuitem && (it.menuitem.itemid || it.menuitem.id))
+            || it.id;
+          if (id == null || id === '') continue;
+
+          const name = (it.menuitem && it.menuitem.name)
+            ? it.menuitem.name
+            : (it.name || ('Item #' + id));
+          const price = parseFloat(
+            it.unitprice != null ? it.unitprice
+              : (it.menuitem && it.menuitem.price != null ? it.menuitem.price : (it.price || 0))
+          );
+          const image = (it.menuitem && it.menuitem.imageurl) ? it.menuitem.imageurl : (it.imageurl || '');
+          const qty = parseInt(it.quantity != null ? it.quantity : (it.qty || 1), 10) || 1;
+
+          Cart.addItem({
+            id: String(id),
+            name: name,
+            price: price,
+            image: image,
+            restaurant: restName,
+            restaurantId: restId,
+            qty: qty
+          });
+          added++;
+        }
+
+        if (!added) {
+          alert('Could not map order items to the cart. Item IDs may be missing.');
+          return;
+        }
+
+        window.location.href = 'cart.html';
+      } catch (e) {
+        console.error(e);
+        alert('Failed to reorder: ' + (e.message || e));
+      }
+    };
+
+    async function loadAddresses(customerId) {
+      const list = document.getElementById('savedAddressesList');
+      if (!list) return;
+      try {
+        const addrs = await DB.getCustomerAddresses(customerId);
+        if (!addrs || !addrs.length) {
+          list.innerHTML = '<p class="text-muted small">No saved addresses yet.</p>';
+          return;
+        }
+        list.innerHTML = addrs.map(a => `
+          <div class="border rounded-3 p-3 mb-3 bg-white shadow-sm">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                '<span class="badge bg-secondary mb-2">Saved</span>'
+                <p class="mb-0 fw-medium">${a.street}</p>
+                <small class="text-muted">${a.city} ${a.pincode ? '- ' + a.pincode : ''}</small>
+              </div>
+              <div>
+                <button class="btn btn-sm btn-outline-danger btn-del-addr" data-id="${a.addressid}"><i class="bi bi-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        list.querySelectorAll('.btn-del-addr').forEach(btn => {
+          btn.onclick = async function() {
+            if (confirm('Delete this address?')) {
+              await DB.deleteCustomerAddress(this.dataset.id);
+              loadAddresses(customerId);
+            }
+          };
+        });
+      } catch (e) {
+        console.warn('Load addresses error:', e);
+        list.innerHTML = '<p class="text-danger small">Failed to load saved addresses.</p>';
+      }
+    }
+
+    async function loadProfile() {
+      let user = {};
+      try { user = JSON.parse(localStorage.getItem('foodexpress_user') || '{}'); } catch {}
+      
+      const nameInput = document.getElementById('profileName');
+      const emailInput = document.getElementById('profileEmail');
+      const phoneInput = document.getElementById('profilePhone');
+      const emailEl = document.getElementById('userEmail');
+
+      if (user.name) {
+        document.querySelectorAll('.user-name').forEach(el => {
+          if (el.classList.contains('profile-avatar')) {
+            el.textContent = (user.name || 'U').charAt(0).toUpperCase();
+          } else {
+            el.textContent = user.name;
+          }
+        });
+      }
+      if (emailEl && user.email) emailEl.textContent = user.email;
+      if (nameInput && user.name) nameInput.value = user.name;
+      if (emailInput && user.email) emailInput.value = user.email;
+      if (phoneInput && user.phone) phoneInput.value = user.phone;
+
+      if (!user.email) {
+        const tbody = document.getElementById('profileOrdersBody');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Please login to view your orders.</td></tr>';
+        return;
+      }
+
+      try {
+        await waitClient();
+        let customer = await DB.findCustomerByEmail(user.email);
+        if (customer) {
+          user.customerId = customer.customerid;
+          localStorage.setItem('foodexpress_user', JSON.stringify(user));
+          if (nameInput && customer.name) nameInput.value = customer.name;
+          if (phoneInput && customer.phone) phoneInput.value = customer.phone;
+
+          // Load Saved Addresses
+          loadAddresses(customer.customerid);
+
+          // Setup Save Address handler
+          const saveAddrBtn = document.getElementById('saveNewAddrBtn');
+          if (saveAddrBtn) {
+            saveAddrBtn.onclick = async function() {
+              const street = document.getElementById('newAddrStreet')?.value?.trim();
+              const city = document.getElementById('newAddrCity')?.value?.trim() || '';
+              const pincode = document.getElementById('newAddrPin')?.value?.trim() || '682001';
+              if (!street || !city) {
+                alert('Please enter street and city');
+                return;
+              }
+              await DB.addCustomerAddress({ customerId: customer.customerid, street, city, pincode });
+              document.getElementById('newAddrStreet').value = '';
+              const collapseEl = document.getElementById('newAddressCollapse');
+              if (collapseEl && window.bootstrap) {
+                const bsCollapse = bootstrap.Collapse.getInstance(collapseEl) || new bootstrap.Collapse(collapseEl);
+                bsCollapse.hide();
+              }
+              loadAddresses(customer.customerid);
+            };
+          }
+
+          // Load Orders for logged-in customer only!
+          const orders = await DB.getCustomerOrders(customer.customerid);
+          const tbody = document.getElementById('profileOrdersBody');
+          if (tbody) {
+            if (!orders || orders.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">You have placed no orders yet.</td></tr>';
+            } else {
+              tbody.innerHTML = orders.map(o => {
+                const rest = o.restaurant ? o.restaurant.name : 'Kitchen';
+                const total = (parseFloat(o.subtotal) || 0) + (parseFloat(o.deliveryfee) || 40);
+                return `<tr>
+                  <td class="fw-bold">#${o.orderid}</td>
+                  <td>${rest}</td>
+                  <td>₹${total}</td>
+                  <td>${statusBadgeHtml(o.status)}</td>
+                  <td class="text-end">
+                    <a href="order_tracking.html?order=${o.orderid}" class="btn btn-sm btn-outline-custom me-1">Track</a>
+                    <button onclick="reorderOrder(${o.orderid})" class="btn btn-sm btn-primary-custom">Reorder</button>
+                  </td>
+                </tr>`;
+              }).join('');
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Profile DB load:', e);
+      }
+    }
+
+    document.getElementById('saveProfileBtn')?.addEventListener('click', async function () {
+      const name = document.getElementById('profileName')?.value?.trim() || 'User';
+      const email = document.getElementById('profileEmail')?.value?.trim() || '';
+      const phone = document.getElementById('profilePhone')?.value?.trim() || '';
+      let user = { name, email, phone };
+      try {
+        const prev = JSON.parse(localStorage.getItem('foodexpress_user') || '{}');
+        user = { ...prev, ...user };
+      } catch {}
+
+      localStorage.setItem('foodexpress_user', JSON.stringify(user));
+
+      try {
+        await waitClient();
+        let customer = email ? await DB.findCustomerByEmail(email) : null;
+        if (customer) {
+          await DB.updateCustomer(customer.customerid, { name, phone });
+        } else if (email) {
+          customer = await DB.createCustomer({ name, email, phone, password: 'demo' });
+          user.customerId = customer.customerid;
+          localStorage.setItem('foodexpress_user', JSON.stringify(user));
+        }
+        alert('Profile updated successfully!');
+      } catch (e) {
+        console.error(e);
+        alert('Updated locally. DB error: ' + e.message);
+      }
+      loadProfile();
+    });
+
+    document.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</body>
+</html>
